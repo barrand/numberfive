@@ -20,30 +20,47 @@ sys.path.insert(0, 'libs')
 
 import webapp2
 import urllib2
+import cgi
 from bs4 import BeautifulSoup
 
-html_doc = """
-<html><head><title>The Dormouse's story</title></head>
-<body>
-<p class="title"><b>The Dormouse's story</b></p>
-
-<p class="story">Once upon a time there were three little sisters; and their names were
-<a href="http://example.com/elsie" class="sister" id="link1">Elsie</a>,
-<a href="http://example.com/lacie" class="sister" id="link2">Lacie</a> and
-<a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>;
-and they lived at the bottom of a well.</p>
-
-<p class="story">...</p>
+PAGE_START_HTML = """\
+<html>
+  <body>
+    <form action="/" method="post">
+    <div><textarea name="urlToXml" rows="1" cols="60">http://mar-numberfive.appspot.com/static/nycmqEpic.xml</textarea></div>
+    <div><input type="submit" value="Go"></div>
 """
 
+PAGE_END_HTML = """\
+    </form>
+  </body>
+</html>
+"""
 
 class MainHandler(webapp2.RequestHandler):
-    def get(self):
-		content = urllib2.urlopen('http://mar-numberfive.appspot.com/static/nycmqEpic.xml').read()
+	def get(self):
+		self.response.write(PAGE_START_HTML)
+		self.response.write(PAGE_END_HTML)
+	def post(self):
+		self.response.write(PAGE_START_HTML)
+		content = urllib2.urlopen(cgi.escape(self.request.get('urlToXml'))).read()
 		soup = BeautifulSoup(content)
 		print soup.hoteldescriptivecontent['hotelname']
 		self.response.write(soup.hoteldescriptivecontent['hotelname'])
+		self.response.write(PAGE_END_HTML)
+		
+# class Description(webapp2.RequestHandler):
+# 	def post(self):
+# 		content = urllib2.urlopen(cgi.escape(self.request.get('urlToXml'))).read()
+# 		soup = BeautifulSoup(content)
+# 		print soup.hoteldescriptivecontent['hotelname']
+# 		self.response.write(soup.hoteldescriptivecontent['hotelname'])
+        # self.response.write('<html><body>You wrote:<pre>')
+        # self.response.write(cgi.escape(self.request.get('content')))
+        # self.response.write('</pre></body></html>')
+
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler)
+    # ('/description', Description),
 ], debug=True)
