@@ -1,0 +1,19 @@
+<html>
+    <OTA_HotelDescriptiveInfoRS Version="1.0" xmlns="http://www.opentravel.org/OTA/2003/05" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\OTA\2004B\OTA2004B\_OTA2004B_XML\OTA_HotelDescriptiveInfoRS.xsd">
+        <Success/>
+    </OTA_HotelDescriptiveInfoRS>
+    <head>
+        <title>The Dormouse's story</title>
+    </head>
+<body>
+<p class="title"><b>The Dormouse's story</b></p>
+
+<p class="story">Once upon a time there were three little sisters; and their names were
+<a href="http://example.com/elsie" class="sister" id="link1">Elsie</a>,
+<a href="http://example.com/lacie" class="sister" id="link2">Lacie</a> and
+<a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>;
+and they lived at the bottom of a well.</p>
+
+<p class="story">...</p>
+</body>
+</html>
