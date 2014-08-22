@@ -68,12 +68,12 @@ class MainHandler(webapp2.RequestHandler):
 		city1 = "When visiting #s, there is no better place to stay than #h."
 		city2 = "Come see why the #h is the treasure of #s."
 		city3 = "Celebrate #s with a stay in #h."
-		city4 = "Without a doubt #h has the best that #s has to offer."
+		city4 = "Without a doubt the #h has the best that #s has to offer."
 		city5 = "Enjoy the sights and sounds of #s while visiting #h."
-	
-		tmpString = city1.replace('#s', self.cityName);
+
+		tmpString = city5.replace('#s', self.cityName);
 		tmpString = tmpString.replace('#h', self.hotelName);
-		return toReturn + " goo "+ tmpString
+		return toReturn + tmpString
 
 	def get(self):
 		self.response.write(PAGE_START_HTML)
