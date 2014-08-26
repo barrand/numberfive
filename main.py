@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 #
 # Copyright 2007 Google Inc.
@@ -19,6 +20,8 @@ import sys
 sys.path.insert(0, 'libs')
 
 import webapp2
+import random
+import sentences
 import urllib2
 import cgi
 from bs4 import BeautifulSoup
@@ -36,18 +39,29 @@ PAGE_END_HTML = """\
   </body>
 </html>
 """
+description_en = ""
+description_br = ""
 
 class MainHandler(webapp2.RequestHandler):
 	
+
 	def setupCommonVars(self, soup):
 		self.hotelName = soup.hoteldescriptivecontent['hotelname']
 		self.cityName = soup.find(contactprofiletype='Property Info').find('cityname').renderContents()
+		self.roomCount = soup.find_all('guestroominfo', code='8')[0]['quantity']
+		self.suiteCount = soup.find_all('guestroominfo', code='9')[0]['quantity']
+		print self.suiteCount
+		# self.suiteCount = soup.
 		print self.cityName, self.hotelName
 
-	def buildDescription(self, soup):
+	def buildDescriptions(self, soup):
+		self.currentLangs = ['en', 'br']
+		self.allDescriptions = {}
+		for lang in self.currentLangs:
+			self.allDescriptions[lang] = ""
 		self.setupCommonVars(soup)
-		toReturn = ""
-		toReturn = self.addCityJunk(soup, toReturn)
+		self.addCityJunk(soup)
+		self.addRoomJunk(soup)
 		# description = addStarJunk(description)
 		# description = addHistoricJunk(description)
 		# description = addGuestRoomsJunk(description)
@@ -60,30 +74,36 @@ class MainHandler(webapp2.RequestHandler):
 		# description = addPoolJunk(description)
 		# description = addRestaurantJunk(description)
 		# description = addClosingJunk(description)
-		return toReturn
 
 
 	
-	def addCityJunk(self, soup, toReturn):
-		city1 = "When visiting #s, there is no better place to stay than #h."
-		city2 = "Come see why the #h is the treasure of #s."
-		city3 = "Celebrate #s with a stay in #h."
-		city4 = "Without a doubt the #h has the best that #s has to offer."
-		city5 = "Enjoy the sights and sounds of #s while visiting #h."
+	def addCityJunk(self, soup):
+		for lang in self.currentLangs:
+			#get a random city string by the language and replace the city name
+			tmpString = random.choice(sentences.cityByLang[lang]).replace('#s', self.cityName);
+			tmpString = tmpString.replace('#h', self.hotelName);
+			self.allDescriptions[lang] += tmpString + " "
 
-		tmpString = city5.replace('#s', self.cityName);
-		tmpString = tmpString.replace('#h', self.hotelName);
-		return toReturn + tmpString
+	def addRoomJunk(self, soup):
+		for lang in self.currentLangs:
+			#get a random city string by the language and replace the city name
+			tmpString = random.choice(sentences.roomByLang[lang]).replace('#r', self.roomCount);
+			tmpString = tmpString.replace('#s', self.suiteCount);
+			self.allDescriptions[lang] += tmpString
+
 
 	def get(self):
 		self.response.write(PAGE_START_HTML)
+		self.response.write(sentences.description_en)
 		self.response.write(PAGE_END_HTML)
 	def post(self):
 		self.response.write(PAGE_START_HTML)
 		content = urllib2.urlopen(cgi.escape(self.request.get('urlToXml'))).read()
 		soup = BeautifulSoup(content)
-		output = self.buildDescription(soup)
-		self.response.write(output)
+		self.buildDescriptions(soup)
+		for lang in self.currentLangs:
+			self.response.write(self.allDescriptions[lang])
+			self.response.write('<br><br>')
 		self.response.write(PAGE_END_HTML)
 		
 # class Description(webapp2.RequestHandler):
