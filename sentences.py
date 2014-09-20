@@ -36,7 +36,7 @@ roomByLang['br'] = brRoom
 urbanByLang = {}
 enUrban = [] 
 enUrban.append(u" Feel the heart of #s in this vibrant urban location.")
-enUrban.append(u" Taste the pulse of the #s. You know you love the city!")
+enUrban.append(u" Feel the pulse of the #s. You know you love the city!")
 urbanByLang['en'] = enUrban
 
 brUrban = [] 
@@ -51,8 +51,8 @@ enMeeting.append(u" Our hotel is a great place to host your meeting, with #s tot
 meetingByLang['en'] = enMeeting
 
 brMeeting = [] 
-brMeeting.append(u" Necessidade de realização de uma reunião ? Temos #n salas de reuniões , com #s #u totais.")
-brMeeting.append(u" O nosso hotel é um ótimo lugar para sediar a reunião , com #s #u total de espaço para eventos e salas de #n .")
+brMeeting.append(u" Necessidade de realização de uma reunião? Temos #n salas de reuniões , com #s #u totais.")
+brMeeting.append(u" O nosso hotel é um ótimo lugar para sediar a reunião, com #s #u total de espaço para eventos e salas de #n.")
 meetingByLang['br'] = brMeeting
 
 airportByLang = {}
