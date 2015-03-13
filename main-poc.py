@@ -23,8 +23,6 @@ import webapp2
 import random
 import sentences
 import urllib2
-import json
-from pprint import pprint
 import cgi
 from bs4 import BeautifulSoup
 
@@ -90,13 +88,10 @@ class MainHandler(webapp2.RequestHandler):
 			print "music " + str(self.musicPlace)
 
 		self.attractions = []
-		attractionTag = soup.find_all('attraction', attractioncategorycode='62')
+		attractionTag = soup.find_all('attraction', attractioncategorycode='18')
 		for t in attractionTag:
-			if int(t['sort']) < 6:
-				self.attractions.append(t['attractionname'])
-				if int(t['sort']) == 1:
-					self.topPoiDist = t.find_all('refpoint')[0]['distance']
-					print "distance " + self.topPoiDist
+			self.attractions.append(t['attractionname'])
+		print "attractions " + str(self.attractions)
 # self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
 # 		if self.airportName is not None:
 # 			print "airpport " + str(self.airportName)
@@ -104,65 +99,84 @@ class MainHandler(webapp2.RequestHandler):
 		# self.suiteCount = soup.
 
 	def buildDescriptions(self, soup):
-		# self.currentLangs = ['en', 'br']
-		self.currentLangs = ['en']
+		self.currentLangs = ['en', 'br']
 		self.allDescriptions = {}
 		for lang in self.currentLangs:
 			self.allDescriptions[lang] = ""
 		self.setupCommonVars(soup)
+		self.addCityJunk(soup)
+		self.addUrbanJunk(soup)
+		self.addRoomJunk(soup)
+		self.addMeetingsJunk(soup)
+		self.addAirportJunk(soup)
+		self.addMusicJunk(soup)
 		self.addAttractionJunk(soup)
+		# description = addStarJunk(description)
+		# description = addHistoricJunk(description)
+		# description = addGuestRoomsJunk(description)
+		# description = addWifiJunk(description)
+		# description = addTechnologyJunk(description)
+		# description = addEventSpaceJunk(description)
+		# description = addPOIJunk(description)
+		# description = addTransportationJunk(description)
+		# description = addFitnessJunk(description)
+		# description = addPoolJunk(description)
+		# description = addRestaurantJunk(description)
+		# description = addClosingJunk(description)
 
+
+	
+	def addCityJunk(self, soup):
+		for lang in self.currentLangs:
+			#get a random city string by the language and replace the city name
+			tmpString = random.choice(sentences.cityByLang[lang]).replace('#s', self.cityName);
+			tmpString = tmpString.replace('#h', self.hotelName);
+			self.allDescriptions[lang] += tmpString + " "
+
+	def addUrbanJunk(self, soup):
+		for lang in self.currentLangs:
+			tmpString = random.choice(sentences.urbanByLang[lang]).replace('#s', self.cityName);
+			self.allDescriptions[lang] += tmpString
+
+	def addRoomJunk(self, soup):
+		for lang in self.currentLangs:
+			#get a random city string by the language and replace the city name
+			tmpString = random.choice(sentences.roomByLang[lang]).replace('#r', self.roomCount);
+			tmpString = tmpString.replace('#s', self.suiteCount);
+			self.allDescriptions[lang] += tmpString
+
+	def addMeetingsJunk(self, soup):
+		for lang in self.currentLangs:
+			#get a random city string by the language and replace the city name
+			tmpString = random.choice(sentences.meetingByLang[lang]).replace('#n', self.meetingRooms);
+			tmpString = tmpString.replace('#s', self.totalRoomSpace);
+			tmpString = tmpString.replace('#u', self.totalRoomSpaceUnit);
+			self.allDescriptions[lang] += tmpString
+
+	def addAirportJunk(self, soup):
+		for lang in self.currentLangs:
+			#get a random city string by the language and replace the city name
+			tmpString = random.choice(sentences.airportByLang[lang]).replace('#a', self.airportName);
+			self.allDescriptions[lang] += tmpString
+
+	def addMusicJunk(self, soup):
+		for lang in self.currentLangs:
+			tmpString = random.choice(sentences.musicByLang[lang]).replace('#m', self.musicPlace);
+			self.allDescriptions[lang] += tmpString
 
 	def addAttractionJunk(self, soup):
 		for lang in self.currentLangs:
-			# tmpString = random.choice(sentences.attractionsByLang[lang]).replace('#n', self.hotelName);
-			json_data = open('sentences.json')
-			data = json.load(json_data)
-			
-
-			tmpString = random.choice(data['sentences']['pois']['phrases'])['phrase']
-			poiList = ""
-			poiCount = 0
-			totalPoi = len(self.attractions)
+			tmpString = random.choice(sentences.attractionsByLang[lang]).replace('#n', self.hotelName);
+			attList = ""
 			for a in self.attractions:
-				if poiCount < totalPoi -1:
-					poiList += a + ", "
-				else:
-					poiList += " and the " + a + "."
-				poiCount += 1
-			tmpString = tmpString.replace('{poiList}', poiList)
-			tmpString = tmpString.replace('{topPoi}', self.attractions[0])
-			print "dazed and confused " + self.topPoiDist
-			tmpString = tmpString.replace('{topPoiDist}', str(self.topPoiDist))
-
-			print "tmpString " + str(tmpString)
-			b1 = data['sentences']['pois']['b1'].split('/')
-			b2 = data['sentences']['pois']['b2'].split('/')
-			b3 = data['sentences']['pois']['b3'].split('/')
-			print "b1 " + str(b1)
-			tmpString = tmpString.replace('{b1}', random.choice(b1))
-			tmpString = tmpString.replace('{b2}', random.choice(b2))
-			tmpString = tmpString.replace('{b3}', random.choice(b3))
-			tmpString = tmpString.replace('{hotel}', self.hotelName)
-			# attList = ""
-			# for a in self.attractions:
-			# 	attList += a + ", "
-			# tmpString = tmpString.replace('#a', attList)
+				attList += a + ", "
+			tmpString = tmpString.replace('#a', attList)
 			self.allDescriptions[lang] += tmpString
-
-			json_data.close()
 
 
 
 	def get(self):
 		self.response.write(PAGE_START_HTML)
-		content = urllib2.urlopen(cgi.escape("http://mar-numberfive.appspot.com/static/nycmqEpic.xml")).read()
-		soup = BeautifulSoup(content)
-		self.buildDescriptions(soup)
-		for lang in self.currentLangs:
-			self.response.write('<br><b>' + lang + '</b><br>')
-			self.response.write(self.allDescriptions[lang])
-			self.response.write('<br><br>')
 		self.response.write(PAGE_END_HTML)
 	def post(self):
 		self.response.write(PAGE_START_HTML)
