@@ -27,6 +27,7 @@ import json
 from pprint import pprint
 import cgi
 from bs4 import BeautifulSoup
+from random import shuffle
 
 PAGE_START_HTML = """\
 <html>
@@ -68,7 +69,6 @@ class MainHandler(webapp2.RequestHandler):
 		else:
 			self.freeBreakfast = False
 
-		print "free breakfast " + str(self.freeBreakfast)
 
 		# wifiTag = soup.find('businessservicecode', code='69', existscode='1')
 		# print "wifi " + wifiTag
@@ -77,17 +77,17 @@ class MainHandler(webapp2.RequestHandler):
 		self.meetingRooms = meetingRoomTag['meetingroomcount']
 		self.totalRoomSpace = meetingRoomTag['totalroomspace']
 		self.totalRoomSpaceUnit = meetingRoomTag['unitofmeasure']
-		print self.meetingRooms + self.totalRoomSpace + self.totalRoomSpaceUnit
+		# print self.meetingRooms + self.totalRoomSpace + self.totalRoomSpaceUnit
 
-		self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
-		if self.airportName is not None:
-			print "airpport " + str(self.airportName)
+		# self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
+		# if self.airportName is not None:
+		# 	print "airpport " + str(self.airportName)
 
 		# cityCenterTag = sout.find('attraction', attractioncategorycode='68')
 
-		self.musicPlace = soup.find('attraction', attractioncategorycode='71')['attractionname']
-		if self.musicPlace is not None:
-			print "music " + str(self.musicPlace)
+		# self.musicPlace = soup.find('attraction', attractioncategorycode='71')['attractionname']
+		# if self.musicPlace is not None:
+		# 	print "music " + str(self.musicPlace)
 
 		self.attractions = []
 		attractionTag = soup.find_all('attraction', attractioncategorycode='62')
@@ -96,7 +96,6 @@ class MainHandler(webapp2.RequestHandler):
 				self.attractions.append(t['attractionname'])
 				if int(t['sort']) == 1:
 					self.topPoiDist = t.find_all('refpoint')[0]['distance']
-					print "distance " + self.topPoiDist
 # self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
 # 		if self.airportName is not None:
 # 			print "airpport " + str(self.airportName)
@@ -107,50 +106,84 @@ class MainHandler(webapp2.RequestHandler):
 		# self.currentLangs = ['en', 'br']
 		self.currentLangs = ['en']
 		self.allDescriptions = {}
-		for lang in self.currentLangs:
-			self.allDescriptions[lang] = ""
 		self.setupCommonVars(soup)
-		self.addAttractionJunk(soup)
-
-
-	def addAttractionJunk(self, soup):
+		json_data = open('sentences.json')
+		templates = json.load(json_data)
 		for lang in self.currentLangs:
-			# tmpString = random.choice(sentences.attractionsByLang[lang]).replace('#n', self.hotelName);
-			json_data = open('sentences.json')
-			data = json.load(json_data)
+			#initialize the string that will hold all the descriptions
+			self.allDescriptions[lang] = ""
+			#randomize and loop through all the sentence templates
+			randomSentences = templates['sentences']
+			random.shuffle(randomSentences)
+			for t in randomSentences:
+				# #fill in the holders from the banks
+				tmpString = self.fillFromBanks(soup, t)
+
+				# #keep the description as it was before we add the new sentence in case it will be too long.
+				# origDescription = self.allDescriptions[lang]
+
+				#if the order is one put it on the front
+				# if t['order'] is 1:
+				# 	self.allDescriptions[lang] = tmpString + self.allDescriptions[lang]
+				# else:
+				# 	self.allDescriptions[lang] += tmpString
+				
+				# #only add the sentence if we aren't over the limit
+				# if len(self.allDescriptions[lang]) > 900:
+				# 	self.allDescriptions[lang] = origDescription
+
+		json_data.close()
+
+	#function to pick a random sentence, and fill it from the banks
+	def fillFromBanks(self, soup, t):
+		tmpString = ""
+		tmpString = random.choice(t['phrases'])['phrase']
+		for b in t['banks'].keys():
+			#create a list of all the options from this particular bank
+			bOptions = t['banks'][b].split('/')
+			tmpString = tmpString.replace("{"+b+"}", random.choice(bOptions))
+		print tmpString
+		return tmpString
+
+
+	# def addAttractionJunk(self, soup):
+	# 	for lang in self.currentLangs:
+	# 		# tmpString = random.choice(sentences.attractionsByLang[lang]).replace('#n', self.hotelName);
+	# 		json_data = open('sentences.json')
+	# 		data = json.load(json_data)
 			
 
-			tmpString = random.choice(data['sentences']['pois']['phrases'])['phrase']
-			poiList = ""
-			poiCount = 0
-			totalPoi = len(self.attractions)
-			for a in self.attractions:
-				if poiCount < totalPoi -1:
-					poiList += a + ", "
-				else:
-					poiList += " and the " + a + "."
-				poiCount += 1
-			tmpString = tmpString.replace('{poiList}', poiList)
-			tmpString = tmpString.replace('{topPoi}', self.attractions[0])
-			print "dazed and confused " + self.topPoiDist
-			tmpString = tmpString.replace('{topPoiDist}', str(self.topPoiDist))
+	# 		tmpString = random.choice(data['sentences']['pois']['phrases'])['phrase']
+	# 		poiList = ""
+	# 		poiCount = 0
+	# 		totalPoi = len(self.attractions)
+	# 		for a in self.attractions:
+	# 			if poiCount < totalPoi -1:
+	# 				poiList += a + ", "
+	# 			else:
+	# 				poiList += " and the " + a + "."
+	# 			poiCount += 1
+	# 		tmpString = tmpString.replace('{poiList}', poiList)
+	# 		tmpString = tmpString.replace('{topPoi}', self.attractions[0])
+	# 		print "dazed and confused " + self.topPoiDist
+	# 		tmpString = tmpString.replace('{topPoiDist}', str(self.topPoiDist))
 
-			print "tmpString " + str(tmpString)
-			b1 = data['sentences']['pois']['b1'].split('/')
-			b2 = data['sentences']['pois']['b2'].split('/')
-			b3 = data['sentences']['pois']['b3'].split('/')
-			print "b1 " + str(b1)
-			tmpString = tmpString.replace('{b1}', random.choice(b1))
-			tmpString = tmpString.replace('{b2}', random.choice(b2))
-			tmpString = tmpString.replace('{b3}', random.choice(b3))
-			tmpString = tmpString.replace('{hotel}', self.hotelName)
-			# attList = ""
-			# for a in self.attractions:
-			# 	attList += a + ", "
-			# tmpString = tmpString.replace('#a', attList)
-			self.allDescriptions[lang] += tmpString
+	# 		print "tmpString " + str(tmpString)
+	# 		b1 = data['sentences']['pois']['b1'].split('/')
+	# 		b2 = data['sentences']['pois']['b2'].split('/')
+	# 		b3 = data['sentences']['pois']['b3'].split('/')
+	# 		print "b1 " + str(b1)
+	# 		tmpString = tmpString.replace('{b1}', random.choice(b1))
+	# 		tmpString = tmpString.replace('{b2}', random.choice(b2))
+	# 		tmpString = tmpString.replace('{b3}', random.choice(b3))
+	# 		tmpString = tmpString.replace('{hotel}', self.hotelName)
+	# 		# attList = ""
+	# 		# for a in self.attractions:
+	# 		# 	attList += a + ", "
+	# 		# tmpString = tmpString.replace('#a', attList)
+	# 		self.allDescriptions[lang] += tmpString
 
-			json_data.close()
+	# 		json_data.close()
 
 
 
