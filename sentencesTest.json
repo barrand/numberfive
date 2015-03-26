@@ -1,0 +1,126 @@
+{
+    "sentences":
+    [
+        {
+            "order":1,
+            "priority":1,
+            "phrases":[
+                {"phrase": "Something one ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "Something one dumb ",
+                    "phrases":[
+                        {"phrase": "1. "},
+                        {"phrase": "2. "},
+                        {"phrase": "3. "}
+                    ]
+                }
+            ],
+            "banks":{
+                "b1":"Don't miss the /While here, take time to visit the /Our guests love to see the /Come see the ",
+                "b2":"Other top attractions include the /Also check out the /Nearby, you'll also find the /In the area, you'll find the /Other points of interest include the /",
+                "b3":"nearby /close to the /situated near the /in close proximity to the /near the /close by the /conveniently located near the /has easy access to the /"
+            }
+        },
+        {
+            "order":2,
+            "priority":1,
+            "phrases":[
+                {"phrase": "Earl two ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "Earl two dumb ",
+                    "phrases":[
+                        {"phrase": "1 "},
+                        {"phrase": "2 "},
+                        {"phrase": "3 "}
+                    ]
+                }
+            ],
+            "banks":{
+                "b1":"Don't miss the /While here, take time to visit the /Our guests love to see the /Come see the ",
+                "b2":"Other top attractions include the /Also check out the /Nearby, you'll also find the /In the area, you'll find the /Other points of interest include the /",
+                "b3":"nearby /close to the /situated near the /in close proximity to the /near the /close by the /conveniently located near the /has easy access to the /"
+            }
+        },
+        {
+            "order":1,
+            "priority":1,
+            "phrases":[
+                {"phrase": "orig two ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "orig two dumb ",
+                    "phrases":[
+                        {"phrase": "1. "},
+                        {"phrase": "2. "},
+                        {"phrase": "3. "}
+                    ]
+                }
+            ],
+            "banks":{
+                "b1":"Don't miss the /While here, take time to visit the /Our guests love to see the /Come see the ",
+                "b2":"Other top attractions include the /Also check out the /Nearby, you'll also find the /In the area, you'll find the /Other points of interest include the /",
+                "b3":"nearby /close to the /situated near the /in close proximity to the /near the /close by the /conveniently located near the /has easy access to the /"
+            }
+        },
+        {
+            "order":3,
+            "priority":1,
+            "phrases":[
+                {"phrase": "Happy day ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "Happiest day ",
+                    "phrases":[
+                        {"phrase": "1. "},
+                        {"phrase": "2. "},
+                        {"phrase": "3. "}
+                    ]
+                }
+            ],
+            "banks":{}
+        }
+
+    ]
+}

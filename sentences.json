@@ -7,7 +7,15 @@
         	"phrases":[
 				{"phrase": "{b1} {poiList}"},
 				{"phrase": "{topPoi} is only {topPoiDist} miles from {hotel}. {b2} {restPoiList}"},
-				{"phrase": "{hotel} is {b3} {poiList}"}
+				{"phrase": "{hotel} is {b3} {poiList}"},
+				{"phrase": "something fun",
+					"phrases":[
+						{"phrase": "a"},
+						{"phrase": "b"},
+						{"phrase": "c"}
+					]
+				}
+            ]
             ],
             "banks":{
 				"b1":"Don't miss the /While here, take time to visit the /Our guests love to see the /Come see the ",

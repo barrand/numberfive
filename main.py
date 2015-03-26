@@ -107,7 +107,7 @@ class MainHandler(webapp2.RequestHandler):
 		self.currentLangs = ['en']
 		self.allDescriptions = {}
 		self.setupCommonVars(soup)
-		json_data = open('sentences.json')
+		json_data = open('sentencesTest.json')
 		templates = json.load(json_data)
 		for lang in self.currentLangs:
 			#initialize the string that will hold all the descriptions
@@ -115,35 +115,61 @@ class MainHandler(webapp2.RequestHandler):
 			#randomize and loop through all the sentence templates
 			randomSentences = templates['sentences']
 			random.shuffle(randomSentences)
+			sentencesByOrder = {}
 			for t in randomSentences:
 				# #fill in the holders from the banks
 				tmpString = self.fillFromBanks(soup, t)
 
-				# #keep the description as it was before we add the new sentence in case it will be too long.
-				# origDescription = self.allDescriptions[lang]
-
-				#if the order is one put it on the front
-				# if t['order'] is 1:
-				# 	self.allDescriptions[lang] = tmpString + self.allDescriptions[lang]
-				# else:
-				# 	self.allDescriptions[lang] += tmpString
+				try:
+					sentencesByOrder[t['order']]
+				except KeyError:
+					sentencesByOrder[t['order']] = []
 				
-				# #only add the sentence if we aren't over the limit
+				sentencesByOrder[t['order']].append(tmpString)
+				
+				
+
+			#Put in the sentences according to their order parameter
+			for i in range(1, len(sentencesByOrder)+1):
+				#keep the description as it was before we add the new sentence in case it will be too long.
+				origDescription = self.allDescriptions[lang]
+
+				for s in sentencesByOrder[i]:
+					self.allDescriptions[lang] += s 
+
+				#only add the sentence if we aren't over the limit
 				# if len(self.allDescriptions[lang]) > 900:
 				# 	self.allDescriptions[lang] = origDescription
+
 
 		json_data.close()
 
 	#function to pick a random sentence, and fill it from the banks
 	def fillFromBanks(self, soup, t):
 		tmpString = ""
-		tmpString = random.choice(t['phrases'])['phrase']
+		tmpString = self.recursiveFindPhrase(t['phrases'], tmpString)
 		for b in t['banks'].keys():
 			#create a list of all the options from this particular bank
 			bOptions = t['banks'][b].split('/')
-			tmpString = tmpString.replace("{"+b+"}", random.choice(bOptions))
+			if tmpString.find("{b") > -1:
+				tmpString = tmpString.replace("{"+b+"}", random.choice(bOptions))
 		print tmpString
 		return tmpString
+
+	def recursiveFindPhrase(self, phraseList, tmpString):
+		# find a random phrase choice from the base list
+		tmpPhrase = random.choice(phraseList)
+		print "r tmpPhrase" + str(tmpPhrase)
+
+		# add the part of the phrase from our random choice
+		tmpString += tmpPhrase['phrase']
+		print "tmpString in r " + tmpString
+
+		# see if there are additional sub-phrases to add on the end of this string
+		if tmpPhrase.get('phrases'):
+			return self.recursiveFindPhrase(tmpPhrase['phrases'], tmpString)
+		else:
+			return tmpString
 
 
 	# def addAttractionJunk(self, soup):
