@@ -28,7 +28,9 @@ from pprint import pprint
 import cgi
 from bs4 import BeautifulSoup
 from random import shuffle
+from operator import attrgetter, itemgetter
 
+MAX_LENGTH = 90
 PAGE_START_HTML = """\
 <html>
   <body>
@@ -115,34 +117,50 @@ class MainHandler(webapp2.RequestHandler):
 			#randomize and loop through all the sentence templates
 			randomSentences = templates['sentences']
 			random.shuffle(randomSentences)
-			sentencesByOrder = {}
-			for t in randomSentences:
-				# #fill in the holders from the banks
+			print type(randomSentences[0])
+			# a = sorted(randomSentences, key=self.sortkeypicker(['order', 'priority']))
+			a = sorted(randomSentences, key=self.sortkeypicker(['priority', 'order']))
+			
+			currentLength = 0
+			for t in a:
+				o = t['order']
+				p = t['priority']
+
+				print "\norder " + str(o)
+				print "priority " + str(p)
+
 				tmpString = self.fillFromBanks(soup, t)
+				print "lenghts " + str(currentLength + len(tmpString))
+				if currentLength + len(tmpString) > MAX_LENGTH:
+					print "too long. removing something " + tmpString
+					a.remove(t)
+				else:
+					currentLength += len(tmpString)
+					t['output'] = tmpString
 
+			a = sorted(a, key=self.sortkeypicker(['order', 'priority']))
+			for t in a:
 				try:
-					sentencesByOrder[t['order']]
+					print "\nt time " + str(t)
+					self.allDescriptions[lang] += t['output']
 				except KeyError:
-					sentencesByOrder[t['order']] = []
-				
-				sentencesByOrder[t['order']].append(tmpString)
-				
-				
-
-			#Put in the sentences according to their order parameter
-			for i in range(1, len(sentencesByOrder)+1):
-				#keep the description as it was before we add the new sentence in case it will be too long.
-				origDescription = self.allDescriptions[lang]
-
-				for s in sentencesByOrder[i]:
-					self.allDescriptions[lang] += s 
-
-				#only add the sentence if we aren't over the limit
-				# if len(self.allDescriptions[lang]) > 900:
-				# 	self.allDescriptions[lang] = origDescription
-
+					print "\tCOULDN'T ADD " + str(t)
 
 		json_data.close()
+
+	def sortkeypicker(self, keynames):
+	    negate = set()
+	    for i, k in enumerate(keynames):
+	        if k[:1] == '-':
+	            keynames[i] = k[1:]
+	            negate.add(k[1:])
+	    def getit(adict):
+	       composite = [adict[k] for k in keynames]
+	       for i, (k, v) in enumerate(zip(keynames, composite)):
+	           if k in negate:
+	               composite[i] = -v
+	       return composite
+	    return getit
 
 	#function to pick a random sentence, and fill it from the banks
 	def fillFromBanks(self, soup, t):
@@ -153,17 +171,14 @@ class MainHandler(webapp2.RequestHandler):
 			bOptions = t['banks'][b].split('/')
 			if tmpString.find("{b") > -1:
 				tmpString = tmpString.replace("{"+b+"}", random.choice(bOptions))
-		print tmpString
 		return tmpString
 
 	def recursiveFindPhrase(self, phraseList, tmpString):
 		# find a random phrase choice from the base list
 		tmpPhrase = random.choice(phraseList)
-		print "r tmpPhrase" + str(tmpPhrase)
 
 		# add the part of the phrase from our random choice
 		tmpString += tmpPhrase['phrase']
-		print "tmpString in r " + tmpString
 
 		# see if there are additional sub-phrases to add on the end of this string
 		if tmpPhrase.get('phrases'):

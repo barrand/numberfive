@@ -26,11 +26,7 @@
                     ]
                 }
             ],
-            "banks":{
-                "b1":"Don't miss the /While here, take time to visit the /Our guests love to see the /Come see the ",
-                "b2":"Other top attractions include the /Also check out the /Nearby, you'll also find the /In the area, you'll find the /Other points of interest include the /",
-                "b3":"nearby /close to the /situated near the /in close proximity to the /near the /close by the /conveniently located near the /has easy access to the /"
-            }
+            "banks":{}
         },
         {
             "order":2,
@@ -57,11 +53,7 @@
                     ]
                 }
             ],
-            "banks":{
-                "b1":"Don't miss the /While here, take time to visit the /Our guests love to see the /Come see the ",
-                "b2":"Other top attractions include the /Also check out the /Nearby, you'll also find the /In the area, you'll find the /Other points of interest include the /",
-                "b3":"nearby /close to the /situated near the /in close proximity to the /near the /close by the /conveniently located near the /has easy access to the /"
-            }
+            "banks":{}
         },
         {
             "order":1,
@@ -88,6 +80,33 @@
                     ]
                 }
             ],
+            "banks":{}
+        },
+        {
+            "order":1,
+            "priority":3,
+            "phrases":[
+                {"phrase": "priotiry 3 ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "skip me ",
+                    "phrases":[
+                        {"phrase": "1. "},
+                        {"phrase": "2. "},
+                        {"phrase": "3. "}
+                    ]
+                }
+            ],
             "banks":{
                 "b1":"Don't miss the /While here, take time to visit the /Our guests love to see the /Come see the ",
                 "b2":"Other top attractions include the /Also check out the /Nearby, you'll also find the /In the area, you'll find the /Other points of interest include the /",
@@ -96,7 +115,7 @@
         },
         {
             "order":3,
-            "priority":1,
+            "priority":2,
             "phrases":[
                 {"phrase": "Happy day ",
                     "phrases":[
@@ -112,6 +131,114 @@
                     ]
                 },
                 {"phrase": "Happiest day ",
+                    "phrases":[
+                        {"phrase": "1. "},
+                        {"phrase": "2. "},
+                        {"phrase": "3. "}
+                    ]
+                }
+            ],
+            "banks":{}
+        },
+        {
+            "order":3,
+            "priority":3,
+            "phrases":[
+                {"phrase": "Not very important ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "Not me ",
+                    "phrases":[
+                        {"phrase": "1. "},
+                        {"phrase": "2. "},
+                        {"phrase": "3. "}
+                    ]
+                }
+            ],
+            "banks":{}
+        },
+        {
+            "order":3,
+            "priority":3,
+            "phrases":[
+                {"phrase": "Bottom of the stack ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "Bottom dweller ",
+                    "phrases":[
+                        {"phrase": "1. "},
+                        {"phrase": "2. "},
+                        {"phrase": "3. "}
+                    ]
+                }
+            ],
+            "banks":{}
+        },
+        {
+            "order":4,
+            "priority":3,
+            "phrases":[
+                {"phrase": "Below the stack :( ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "So far below the stack. ",
+                    "phrases":[
+                        {"phrase": "1. "},
+                        {"phrase": "2. "},
+                        {"phrase": "3. "}
+                    ]
+                }
+            ],
+            "banks":{}
+        },
+        {
+            "order":5,
+            "priority":1,
+            "phrases":[
+                {"phrase": "Last, but important ",
+                    "phrases":[
+                        {"phrase": "a "},
+                        {"phrase": "b "},
+                        {"phrase": "is great ",
+                            "phrases":[
+                                {"phrase": " always. "},
+                                {"phrase": " at night. "},
+                                {"phrase": " in the morning. "}
+                            ]
+                        }
+                    ]
+                },
+                {"phrase": "Important kaboose. ",
                     "phrases":[
                         {"phrase": "1. "},
                         {"phrase": "2. "},
