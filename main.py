@@ -30,7 +30,6 @@ from bs4 import BeautifulSoup
 from random import shuffle
 from operator import attrgetter, itemgetter
 
-MAX_LENGTH = 90
 PAGE_START_HTML = """\
 <html>
   <body>
@@ -131,7 +130,7 @@ class MainHandler(webapp2.RequestHandler):
 
 				tmpString = self.fillFromBanks(soup, t)
 				print "lenghts " + str(currentLength + len(tmpString))
-				if currentLength + len(tmpString) > MAX_LENGTH:
+				if currentLength + len(tmpString) > templates['maxLimit']:
 					print "too long. removing something " + tmpString
 					a.remove(t)
 				else:
