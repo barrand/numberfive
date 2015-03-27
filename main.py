@@ -97,18 +97,47 @@ class MainHandler(webapp2.RequestHandler):
 				self.attractions.append(t['attractionname'])
 				if int(t['sort']) == 1:
 					self.topPoiDist = t.find_all('refpoint')[0]['distance']
+		self.poiList = ""
+		self.topPoi = self.attractions[0]
+		poiCount = 0
+		totalPoi = len(self.attractions)
+		for a in self.attractions:
+			if poiCount < len(self.attractions)-1:
+				self.poiList += a + ", "
+			else:
+				self.poiList += " and the " + a
+			poiCount += 1
+		
+		poiCount = 0
+		self.restPoiList = ""
+		self.attractions.pop(0)
+		for a in self.attractions:
+			if poiCount < len(self.attractions)-1:
+				self.restPoiList += a + ", "
+			else:
+				self.restPoiList += " and the " + a
+			poiCount += 1
+		print "rest of poi list " + self.restPoiList
 # self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
 # 		if self.airportName is not None:
 # 			print "airpport " + str(self.airportName)
 
 		# self.suiteCount = soup.
+	def replaceVars(self, str):
+		str = str.replace('{hotelName}', self.hotelName)
+		str = str.replace('{cityName}', self.cityName)
+		str = str.replace('{poiList}', self.poiList)
+		str = str.replace('{topPoiDist}', self.topPoiDist)
+		str = str.replace('{topPoi}', self.topPoi)
+		str = str.replace('{restPoiList}', self.restPoiList)
+		return str
 
 	def buildDescriptions(self, soup):
 		# self.currentLangs = ['en', 'br']
 		self.currentLangs = ['en']
 		self.allDescriptions = {}
 		self.setupCommonVars(soup)
-		json_data = open('sentencesTest.json')
+		json_data = open('sentences.json')
 		templates = json.load(json_data)
 		for lang in self.currentLangs:
 			#initialize the string that will hold all the descriptions
@@ -116,22 +145,14 @@ class MainHandler(webapp2.RequestHandler):
 			#randomize and loop through all the sentence templates
 			randomSentences = templates['sentences']
 			random.shuffle(randomSentences)
-			print type(randomSentences[0])
 			# a = sorted(randomSentences, key=self.sortkeypicker(['order', 'priority']))
 			a = sorted(randomSentences, key=self.sortkeypicker(['priority', 'order']))
 			
 			currentLength = 0
 			for t in a:
-				o = t['order']
-				p = t['priority']
-
-				print "\norder " + str(o)
-				print "priority " + str(p)
-
 				tmpString = self.fillFromBanks(soup, t)
 				print "lenghts " + str(currentLength + len(tmpString))
 				if currentLength + len(tmpString) > templates['maxLimit']:
-					print "too long. removing something " + tmpString
 					a.remove(t)
 				else:
 					currentLength += len(tmpString)
@@ -140,10 +161,11 @@ class MainHandler(webapp2.RequestHandler):
 			a = sorted(a, key=self.sortkeypicker(['order', 'priority']))
 			for t in a:
 				try:
-					print "\nt time " + str(t)
 					self.allDescriptions[lang] += t['output']
 				except KeyError:
 					print "\tCOULDN'T ADD " + str(t)
+
+			self.allDescriptions[lang] = self.replaceVars(self.allDescriptions[lang])
 
 		json_data.close()
 
@@ -165,7 +187,9 @@ class MainHandler(webapp2.RequestHandler):
 	def fillFromBanks(self, soup, t):
 		tmpString = ""
 		tmpString = self.recursiveFindPhrase(t['phrases'], tmpString)
+		print "ready to fill from banks " + tmpString
 		for b in t['banks'].keys():
+			print "b " + b
 			#create a list of all the options from this particular bank
 			bOptions = t['banks'][b].split('/')
 			if tmpString.find("{b") > -1:
