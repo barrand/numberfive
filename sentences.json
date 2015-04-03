@@ -3,7 +3,7 @@
     "sentences":
     [
 	    {
-        	"order":2,
+        	"order":1,
         	"priority":1,
             "name":"points_of_interest",
         	"phrases":[
@@ -50,7 +50,7 @@
                "b1":"Check out/Discover/Explore/Enjoy/Revel in/Come see/Come appreciate/Luxuriate in",
                "b2":"recently/freshly",
                "b3":"Got a taste for/Want/Ready for/Looking for/Love the feel of/Seeking/Searching for/Hunting/Pursing",
-               "b4":"opened/opened our doors",
+               "b4":"opened/opened it's doors",
                "b5":"additions/offerings/inclusions",
                "b6":"the newest/something new/the brand new/something brand new/something contemporary/the ultramodern/something ultramodern/something fresh/the latest and greatest/the latest"
             }

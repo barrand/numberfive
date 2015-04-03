@@ -205,7 +205,8 @@ class MainHandler(webapp2.RequestHandler):
 	def removeConditionalSentences(self, allSentences):
 		print "two years ago " + str(date.today().year-2)
 		#if the hotel was built within the last two years, include the recently opened sentence and remove the city statement
-		if int(self.whenBuilt) - date.today().year >= 2:
+		print "diff " + str(date.today().year - int(self.whenBuilt))
+		if date.today().year - int(self.whenBuilt) <= 2:
 			allSentences = self.removeSentenceByName(allSentences, 'city_statement')
 		else:
 			allSentences = self.removeSentenceByName(allSentences, 'recently_opened')
