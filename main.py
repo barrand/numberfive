@@ -24,6 +24,7 @@ import random
 import sentences
 import urllib2
 import json
+from datetime import date
 from pprint import pprint
 import cgi
 from bs4 import BeautifulSoup
@@ -49,6 +50,7 @@ class MainHandler(webapp2.RequestHandler):
 
 	def setupCommonVars(self, soup):
 		self.hotelName = soup.hoteldescriptivecontent['hotelname']
+		self.whenBuilt = soup.hotelinfo['whenbuilt']
 		self.cityName = soup.find(contactprofiletype='Property Info').find('cityname').renderContents()
 		self.roomCount = soup.find_all('guestroominfo', code='8')[0]['quantity']
 		self.suiteCount = soup.find_all('guestroominfo', code='9')[0]['quantity']
@@ -117,7 +119,6 @@ class MainHandler(webapp2.RequestHandler):
 			else:
 				self.restPoiList += " and the " + a
 			poiCount += 1
-		print "rest of poi list " + self.restPoiList
 # self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
 # 		if self.airportName is not None:
 # 			print "airpport " + str(self.airportName)
@@ -138,7 +139,7 @@ class MainHandler(webapp2.RequestHandler):
 		self.allDescriptions = {}
 		self.setupCommonVars(soup)
 		uniqueOrderKeys = []
-		json_data = open('sentencesTest.json')
+		json_data = open('sentences.json')
 		templates = json.load(json_data)
 		for lang in self.currentLangs:
 			#initialize the string that will hold all the descriptions
@@ -149,6 +150,9 @@ class MainHandler(webapp2.RequestHandler):
 			allSentences = sorted(allSentences, key=self.sortkeypicker(['priority', 'order']))
 			sentencesByOrder = {}
 			currentLength = 0
+			#take out the sentenes that we don't need to include
+			allSentences = self.removeConditionalSentences(allSentences)
+
 			#loop through all the sentences and fill in the blanks to see how long they will be
 			for t in allSentences:
 				#create the sentence with all the var filled in
@@ -169,14 +173,11 @@ class MainHandler(webapp2.RequestHandler):
 			#make it a uniqe list
 			uniqueOrderKeys = sorted(list(set(uniqueOrderKeys)))
 			
-			print "uniq order keys " + str(sentencesByOrder)
 			#for every unique order entry
 			for k in uniqueOrderKeys:
-				print "k " + str(k)
-				print "sentencesByOrder[k] " + str(sentencesByOrder[k])
-				# 	#grab all the sentences with that order parameter
+				#grab all the sentences with that order parameter
 				shuffle(sentencesByOrder[k])
-				# #loop through those sentences and add the output
+				#loop through those sentences and add the output
 				for t in sentencesByOrder[k]:
 					try:
 						self.allDescriptions[lang] += t['output']
@@ -201,13 +202,30 @@ class MainHandler(webapp2.RequestHandler):
 	       return composite
 	    return getit
 
+	def removeConditionalSentences(self, allSentences):
+		print "two years ago " + str(date.today().year-2)
+		#if the hotel was built within the last two years, include the recently opened sentence and remove the city statement
+		if int(self.whenBuilt) - date.today().year >= 2:
+			allSentences = self.removeSentenceByName(allSentences, 'city_statement')
+		else:
+			allSentences = self.removeSentenceByName(allSentences, 'recently_opened')
+		return allSentences
+
+	def removeSentenceByName(self, allSentences, name):
+		for s in allSentences:
+			print "name check " + s['name'] + " " + name
+			if s['name'] == name:
+				print "\nbefore " + str(len(allSentences))
+				allSentences.remove(s)
+				print "after " + str(len(allSentences))
+				break
+		return allSentences
+
 	#function to pick a random sentence, and fill it from the banks
 	def fillFromBanks(self, soup, t):
 		tmpString = ""
 		tmpString = self.recursiveFindPhrase(t['phrases'], tmpString)
-		print "ready to fill from banks " + tmpString
 		for b in t['banks'].keys():
-			print "b " + b
 			#create a list of all the options from this particular bank
 			bOptions = t['banks'][b].split('/')
 			if tmpString.find("{b") > -1:
