@@ -137,33 +137,51 @@ class MainHandler(webapp2.RequestHandler):
 		self.currentLangs = ['en']
 		self.allDescriptions = {}
 		self.setupCommonVars(soup)
-		json_data = open('sentences.json')
+		uniqueOrderKeys = []
+		json_data = open('sentencesTest.json')
 		templates = json.load(json_data)
 		for lang in self.currentLangs:
 			#initialize the string that will hold all the descriptions
 			self.allDescriptions[lang] = ""
 			#randomize and loop through all the sentence templates
-			randomSentences = templates['sentences']
-			random.shuffle(randomSentences)
-			# a = sorted(randomSentences, key=self.sortkeypicker(['order', 'priority']))
-			a = sorted(randomSentences, key=self.sortkeypicker(['priority', 'order']))
-			
+			allSentences = templates['sentences']
+			# a = sorted(allSentences, key=self.sortkeypicker(['order', 'priority']))
+			allSentences = sorted(allSentences, key=self.sortkeypicker(['priority', 'order']))
+			sentencesByOrder = {}
 			currentLength = 0
-			for t in a:
+			#loop through all the sentences and fill in the blanks to see how long they will be
+			for t in allSentences:
+				#create the sentence with all the var filled in
 				tmpString = self.fillFromBanks(soup, t)
-				print "lenghts " + str(currentLength + len(tmpString))
+				#make sure we aren't over the limit, if we are over the limit, remove the sentence
 				if currentLength + len(tmpString) > templates['maxLimit']:
 					a.remove(t)
 				else:
 					currentLength += len(tmpString)
 					t['output'] = tmpString
+					uniqueOrderKeys.append(t['order'])
+					try:
+						sentencesByOrder[t['order']]
+					except KeyError:
+						sentencesByOrder[t['order']] = []
+					sentencesByOrder[t['order']].append(t)
 
-			a = sorted(a, key=self.sortkeypicker(['order', 'priority']))
-			for t in a:
-				try:
-					self.allDescriptions[lang] += t['output']
-				except KeyError:
-					print "\tCOULDN'T ADD " + str(t)
+			#make it a uniqe list
+			uniqueOrderKeys = sorted(list(set(uniqueOrderKeys)))
+			
+			print "uniq order keys " + str(sentencesByOrder)
+			#for every unique order entry
+			for k in uniqueOrderKeys:
+				print "k " + str(k)
+				print "sentencesByOrder[k] " + str(sentencesByOrder[k])
+				# 	#grab all the sentences with that order parameter
+				shuffle(sentencesByOrder[k])
+				# #loop through those sentences and add the output
+				for t in sentencesByOrder[k]:
+					try:
+						self.allDescriptions[lang] += t['output']
+					except KeyError:
+						print "\tCOULDN'T ADD " + str(t)
 
 			self.allDescriptions[lang] = self.replaceVars(self.allDescriptions[lang])
 
