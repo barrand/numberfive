@@ -1,0 +1,83 @@
+{
+    "maxLimit": 255,
+    "sentences": [
+        {
+            "order": 1,
+            "priority": 1,
+            "name": "points_of_interest",
+            "phrases": [
+                {
+                    "phrase": "{b1} {poiList}. "
+                },
+                {
+                    "phrase": "{topPoi} befindet sich nur {topPoiDist} von unserem {hotelName}. {b2} {restPoiList}. "
+                },
+                {
+                    "phrase": "Das {hotelName} {b3}  {poiList}. "
+                }
+            ],
+            "banks": {
+                "b1": "Verpassen Sie nicht/Nehmen Sie sich Zeit für/Unsere Gäste schätzen",
+                "b2": "Sehr beliebte Sehenswürdigkeiten sind weiters /Erkunden Sie auch/Besuchen Sie in der Nähe/Nahe zu unserem Hotel finden Sie/Weitere Sehenswürdigketien sind/",
+                "b3": "in der Nähe von/nahe zu/direkt in/Nur wenige Kilometer vom Stadtzentrum entfern/in unmittelbarer Nähe"
+            }
+        },
+        {
+            "order": 1,
+            "priority": 1,
+            "name": "city_statement",
+            "phrases": [
+                {
+                    "phrase": "{b1} {cityName} wenn sie bei uns im {hotelName} übernachten. "
+                }
+            ],
+            "banks": {
+                "b1": "Entdecken Sie/Erkunden Sie/Erforschen Sie/Genießen Sie/Schwelgen Sie in/Sehen Sie sich an",
+                "b2": "wenn Sie bei uns übernachten/Wenn Sie uns besuchen/während Sie bei uns wohnen/mit einem Aufenthalt im/während Ihres Aufenthalts/wenn Sie zu uns ins Hotel kommen/Seien Sie unser Gast/wenn Sie bei uns Quartier beziehen"
+            }
+        },
+        {
+            "order": 1,
+            "priority": 1,
+            "name": "recently_opened",
+            "phrases": [
+                {
+                    "phrase": "{b1} Das ",
+                    "phrases": [
+                        {
+                            "phrase": "{b2} wurde {hotelName} in {city} eröffnet. "
+                        },
+                        {
+                            "phrase": "{hotelName}, {city} neueste {b4}. "
+                        }
+                    ]
+                },
+                {
+                    "phrase": "{b3}{hotelName}{cityName} wurde {b4} im Jahr {openDate}. "
+                }
+            ],
+            "banks": {
+                "b1": "Entdecken Sie/Erkunden Sie/Erforschen Sie/Genießen Sie/Schwelgen Sie in/Sehen Sie sich an",
+                "b2": "kürlich/gerade/vor kurzem",
+                "b3": "Schätzen Sie neue Trends?/Sie hätten gerne mehr Neues?/Haben Sie die Nase voll vom ewig Gleichen?/Bereit für etwas Neues?/Suchen Sie nach etwas Neuem?/Sie mögen den Geruch von Neuem?/Suchen Sie etwas Zeitgenössisches?/Schätzen Sie ultra-modern?",
+                "b4": "wurde neu eröffnet/wurde gerade erst umgebaut und neu eröffnet",
+                "b5": "zusätzlich/beinhaltet/inbegriffen"
+            }
+        },
+        {
+            "order": 1,
+            "priority": 1,
+            "name": "historic",
+            "phrases": [
+                {
+                    "phrase": "Unser {b1} {b2} wurde {b3}im Jahr {whenBuilt}. "
+                }
+            ],
+            "banks": {
+                "b1": "klassisches/zeitloses/denkwürdiges/hervorragendes/außergewöhnliches/ehrwürdiges/unvergeßliches/vornehmes/erhabenes/renommiertes/bemerkenswertes/besonders",
+                "b2": "Hotel/Gebäude/Lage",
+                "b3": "gebaut/erweitert/völlig renoviert/eingeweiht/vorgestellt"
+            }
+        }
+    ]
+}

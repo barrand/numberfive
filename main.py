@@ -95,7 +95,7 @@ class MainHandler(webapp2.RequestHandler):
 		self.attractions = []
 		attractionTag = soup.find_all('attraction', attractioncategorycode='62')
 		for t in attractionTag:
-			if int(t['sort']) < 6:
+			if int(t['sort']) < 5:
 				self.attractions.append(t['attractionname'])
 				if int(t['sort']) == 1:
 					self.topPoiDist = t.find_all('refpoint')[0]['distance']
@@ -131,17 +131,22 @@ class MainHandler(webapp2.RequestHandler):
 		str = str.replace('{topPoiDist}', self.topPoiDist)
 		str = str.replace('{topPoi}', self.topPoi)
 		str = str.replace('{restPoiList}', self.restPoiList)
+		str = str.replace('{whenBuilt}', self.whenBuilt)
 		return str
 
 	def buildDescriptions(self, soup):
 		# self.currentLangs = ['en', 'br']
-		self.currentLangs = ['en']
+		self.currentLangs = ['en', 'de']
+		self.marshas = ['bkkms', 'dxbae', 'dxbjw', 'hktjw', "hktkl", "jedsa", "lonpr", "nycme", "nycmq", "pmimc", "sllms", "stocy", "wawpl", "yowmc"]
 		self.allDescriptions = {}
 		self.setupCommonVars(soup)
 		uniqueOrderKeys = []
-		json_data = open('sentences.json')
-		templates = json.load(json_data)
+		# for marsha in marshas:
 		for lang in self.currentLangs:
+			print "file " + 'sentences_'+lang+'.json'
+			json_data = open('sentences_'+lang+'.json')
+			templates = json.load(json_data)
+
 			#initialize the string that will hold all the descriptions
 			self.allDescriptions[lang] = ""
 			#randomize and loop through all the sentence templates
@@ -189,18 +194,18 @@ class MainHandler(webapp2.RequestHandler):
 		json_data.close()
 
 	def sortkeypicker(self, keynames):
-	    negate = set()
-	    for i, k in enumerate(keynames):
-	        if k[:1] == '-':
-	            keynames[i] = k[1:]
-	            negate.add(k[1:])
-	    def getit(adict):
-	       composite = [adict[k] for k in keynames]
-	       for i, (k, v) in enumerate(zip(keynames, composite)):
-	           if k in negate:
-	               composite[i] = -v
-	       return composite
-	    return getit
+		negate = set()
+		for i, k in enumerate(keynames):
+			if k[:1] == '-':
+				keynames[i] = k[1:]
+		negate.add(k[1:])
+		def getit(adict):
+			composite = [adict[k] for k in keynames]
+			for i, (k, v) in enumerate(zip(keynames, composite)):
+				if k in negate:
+					composite[i] = -v
+					return composite
+		return getit
 
 	def removeConditionalSentences(self, allSentences):
 		print "two years ago " + str(date.today().year-2)
@@ -245,48 +250,6 @@ class MainHandler(webapp2.RequestHandler):
 			return self.recursiveFindPhrase(tmpPhrase['phrases'], tmpString)
 		else:
 			return tmpString
-
-
-	# def addAttractionJunk(self, soup):
-	# 	for lang in self.currentLangs:
-	# 		# tmpString = random.choice(sentences.attractionsByLang[lang]).replace('#n', self.hotelName);
-	# 		json_data = open('sentences.json')
-	# 		data = json.load(json_data)
-			
-
-	# 		tmpString = random.choice(data['sentences']['pois']['phrases'])['phrase']
-	# 		poiList = ""
-	# 		poiCount = 0
-	# 		totalPoi = len(self.attractions)
-	# 		for a in self.attractions:
-	# 			if poiCount < totalPoi -1:
-	# 				poiList += a + ", "
-	# 			else:
-	# 				poiList += " and the " + a + "."
-	# 			poiCount += 1
-	# 		tmpString = tmpString.replace('{poiList}', poiList)
-	# 		tmpString = tmpString.replace('{topPoi}', self.attractions[0])
-	# 		print "dazed and confused " + self.topPoiDist
-	# 		tmpString = tmpString.replace('{topPoiDist}', str(self.topPoiDist))
-
-	# 		print "tmpString " + str(tmpString)
-	# 		b1 = data['sentences']['pois']['b1'].split('/')
-	# 		b2 = data['sentences']['pois']['b2'].split('/')
-	# 		b3 = data['sentences']['pois']['b3'].split('/')
-	# 		print "b1 " + str(b1)
-	# 		tmpString = tmpString.replace('{b1}', random.choice(b1))
-	# 		tmpString = tmpString.replace('{b2}', random.choice(b2))
-	# 		tmpString = tmpString.replace('{b3}', random.choice(b3))
-	# 		tmpString = tmpString.replace('{hotel}', self.hotelName)
-	# 		# attList = ""
-	# 		# for a in self.attractions:
-	# 		# 	attList += a + ", "
-	# 		# tmpString = tmpString.replace('#a', attList)
-	# 		self.allDescriptions[lang] += tmpString
-
-	# 		json_data.close()
-
-
 
 	def get(self):
 		self.response.write(PAGE_START_HTML)

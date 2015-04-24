@@ -1,0 +1,63 @@
+{
+    "maxLimit":500,
+    "sentences":
+    [
+        {
+            "order":1,
+            "priority":1,
+            "phrases":[
+                {"phrase": "{topPoi} is only {topPoiDist} miles from the {hotelName}. {b2} {restPoiList}"}
+            ],
+            "banks":{
+                "b1":"Don't miss the /While here, take time to visit the /Our guests love to see the /Come see the ",
+                "b2":"Other top attractions include the /Also check out the /Nearby, you'll also find the /In the area, you'll also find the /Other points of interest include the /",
+                "b3":"nearby /close to the /situated near the /in close proximity to the /near the /close by the /conveniently located near the /has easy access to the /"
+            }
+        },
+        {
+            "order":1,
+            "priority":1,
+            "phrases":[
+                {"phrase": "{b1} the ",
+                    "phrases":
+                    [
+                        {"phrase": "{b2} opened {hotelName} in {cityName}."},
+                        {"phrase": "{hotelName}, one of {cityName}'s latest {b3}."}
+                    ]
+                },
+                {"phrase": "{b3} {cityName}'s {hotelName} {b4} in 2005. "}
+                
+            ],
+            "banks":{
+                "b1":"Check out/Discover/Explore/Enjoy/Revel in/Come see/Come appreciate/Luxuriate in",
+                "b2":"recently/freshly",
+                "b3":"Got a taste for the new?/Want something fresh?/Tired of the same old?/Ready for something new?/Looking for something new?/Love the feel of brand new?/Want something contemporary?/Looking for ultramodern?",
+                "b4":"opened/opened the doors/"
+            }
+        },
+        {
+            "order":2,
+            "priority":1,
+            "phrases":[
+                {"phrase": "bla bla "}
+            ],
+            "banks":{}
+        },
+        {
+            "order":5,
+            "priority":1,
+            "phrases":[
+                {"phrase": "last one "}
+            ],
+            "banks":{}
+        },
+        {
+            "order":5,
+            "priority":2,
+            "phrases":[
+                {"phrase": "last one low priority"}
+            ],
+            "banks":{}
+        }
+    ]
+}
