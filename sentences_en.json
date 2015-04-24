@@ -29,7 +29,7 @@
             "name": "city_statement",
             "phrases": [
                 {
-                    "phrase": "{b1} {cityName} {b2} {hotelName}. "
+                    "phrase": "{b1} {cityName} {b2} {hotelNameSansCity}. "
                 }
             ],
             "banks": {
@@ -46,15 +46,15 @@
                     "phrase": "{b1} the ",
                     "phrases": [
                         {
-                            "phrase": "{b2} opened {hotelName} in {cityName}. "
+                            "phrase": "{b2} opened {hotelNameSansCity} in {cityName}. "
                         },
                         {
-                            "phrase": "{hotelName}, one of {cityName}'s latest {b5}. "
+                            "phrase": "{hotelNameSansCity}, one of {cityName}'s latest {b5}. "
                         }
                     ]
                 },
                 {
-                    "phrase": "{b3} {b6}? {cityName}'s {hotelName} {b4} in 2005. "
+                    "phrase": "{b3} {b6}? {cityName}'s {hotelNameSansCity} {b4} in 2005. "
                 }
             ],
             "banks": {

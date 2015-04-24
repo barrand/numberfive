@@ -52,6 +52,7 @@ class MainHandler(webapp2.RequestHandler):
 		self.hotelName = soup.hoteldescriptivecontent['hotelname']
 		self.whenBuilt = soup.hotelinfo['whenbuilt']
 		self.cityName = soup.find(contactprofiletype='Property Info').find('cityname').renderContents()
+		self.hotelNameSansCity = self.hotelName.replace(self.cityName, "")
 		self.roomCount = soup.find_all('guestroominfo', code='8')[0]['quantity']
 		self.suiteCount = soup.find_all('guestroominfo', code='9')[0]['quantity']
 		urbanTags = soup.find_all('locationcategory', code='3', existscode='1', codedetail="Location Type: City")
@@ -127,6 +128,7 @@ class MainHandler(webapp2.RequestHandler):
 	def replaceVars(self, str):
 		str = str.replace('{hotelName}', self.hotelName)
 		str = str.replace('{cityName}', self.cityName)
+		str = str.replace('{hotelNameSansCity}', self.hotelNameSansCity)
 		str = str.replace('{poiList}', self.poiList)
 		str = str.replace('{topPoiDist}', self.topPoiDist)
 		str = str.replace('{topPoi}', self.topPoi)
@@ -134,64 +136,78 @@ class MainHandler(webapp2.RequestHandler):
 		str = str.replace('{whenBuilt}', self.whenBuilt)
 		return str
 
-	def buildDescriptions(self, soup):
+	def buildDescriptions(self):
 		# self.currentLangs = ['en', 'br']
+		# self.marshas = ['bkkms', 'dxbae', 'dxbjw', 'hktjw', "hktkl", "jedsa", "lonpr", "nycme", "nycmq", "pmimc", "sllms", "stocy", "wawpl", "yowmc"]
+		self.marshas = ['nycmq', 'dxbae', 'dxbjw', 'hktjw', 'hktkl', 'jedsa']
 		self.currentLangs = ['en', 'de']
-		self.marshas = ['bkkms', 'dxbae', 'dxbjw', 'hktjw', "hktkl", "jedsa", "lonpr", "nycme", "nycmq", "pmimc", "sllms", "stocy", "wawpl", "yowmc"]
+		#initialize the string that will hold all the descriptions
+		
+		
 		self.allDescriptions = {}
-		self.setupCommonVars(soup)
-		uniqueOrderKeys = []
-		# for marsha in marshas:
-		for lang in self.currentLangs:
-			print "file " + 'sentences_'+lang+'.json'
-			json_data = open('sentences_'+lang+'.json')
-			templates = json.load(json_data)
+		# for lang in self.currentLangs:
+		# 	self.allDescriptions[lang] = ""
 
-			#initialize the string that will hold all the descriptions
-			self.allDescriptions[lang] = ""
-			#randomize and loop through all the sentence templates
-			allSentences = templates['sentences']
-			# a = sorted(allSentences, key=self.sortkeypicker(['order', 'priority']))
-			allSentences = sorted(allSentences, key=self.sortkeypicker(['priority', 'order']))
-			sentencesByOrder = {}
-			currentLength = 0
-			#take out the sentenes that we don't need to include
-			allSentences = self.removeConditionalSentences(allSentences)
+		for marsha in self.marshas:
+			content = urllib2.urlopen(cgi.escape("http://mar-numberfive.appspot.com/static/"+marsha+"Epic.xml")).read()
+			soup = BeautifulSoup(content)
+			self.setupCommonVars(soup)
+			uniqueOrderKeys = []
+			self.allDescriptions[marsha] = {}
 
-			#loop through all the sentences and fill in the blanks to see how long they will be
-			for t in allSentences:
-				#create the sentence with all the var filled in
-				tmpString = self.fillFromBanks(soup, t)
-				#make sure we aren't over the limit, if we are over the limit, remove the sentence
-				if currentLength + len(tmpString) > templates['maxLimit']:
-					a.remove(t)
-				else:
-					currentLength += len(tmpString)
-					t['output'] = tmpString
-					uniqueOrderKeys.append(t['order'])
-					try:
-						sentencesByOrder[t['order']]
-					except KeyError:
-						sentencesByOrder[t['order']] = []
-					sentencesByOrder[t['order']].append(t)
+			for lang in self.currentLangs:
+				self.allDescriptions[marsha][lang] = ""
+				print "file " + 'sentences_'+lang+'.json'
+				json_data = open('sentences_'+lang+'.json')
+				templates = json.load(json_data)
 
-			#make it a uniqe list
-			uniqueOrderKeys = sorted(list(set(uniqueOrderKeys)))
-			
-			#for every unique order entry
-			for k in uniqueOrderKeys:
-				#grab all the sentences with that order parameter
-				shuffle(sentencesByOrder[k])
-				#loop through those sentences and add the output
-				for t in sentencesByOrder[k]:
-					try:
-						self.allDescriptions[lang] += t['output']
-					except KeyError:
-						print "\tCOULDN'T ADD " + str(t)
+				
+				#randomize and loop through all the sentence templates
+				allSentences = templates['sentences']
+				# a = sorted(allSentences, key=self.sortkeypicker(['order', 'priority']))
+				allSentences = sorted(allSentences, key=self.sortkeypicker(['priority', 'order']))
+				sentencesByOrder = {}
+				currentLength = 0
+				#take out the sentenes that we don't need to include
+				allSentences = self.removeConditionalSentences(allSentences)
 
-			self.allDescriptions[lang] = self.replaceVars(self.allDescriptions[lang])
+				#loop through all the sentences and fill in the blanks to see how long they will be
+				for t in allSentences:
+					#create the sentence with all the var filled in
+					tmpString = self.fillFromBanks(soup, t)
+					#make sure we aren't over the limit, if we are over the limit, remove the sentence
+					if currentLength + len(tmpString) > templates['maxLimit']:
+						allSentences.remove(t)
+					else:
+						currentLength += len(tmpString)
+						t['output'] = tmpString
+						uniqueOrderKeys.append(t['order'])
+						try:
+							sentencesByOrder[t['order']]
+						except KeyError:
+							sentencesByOrder[t['order']] = []
+						sentencesByOrder[t['order']].append(t)
 
-		json_data.close()
+				#make it a uniqe list
+				uniqueOrderKeys = sorted(list(set(uniqueOrderKeys)))
+				
+				#for every unique order entry
+				for k in uniqueOrderKeys:
+					#grab all the sentences with that order parameter
+					shuffle(sentencesByOrder[k])
+					#loop through those sentences and add the output
+					for t in sentencesByOrder[k]:
+						try:
+							print "trying to append " + str(self.allDescriptions[marsha])
+							print "more " + marsha
+							print "lang " + lang
+							self.allDescriptions[marsha][lang] += t['output']
+						except KeyError:
+							print "\tCOULDN'T ADD " + str(t)
+
+				self.allDescriptions[marsha][lang] = self.replaceVars(self.allDescriptions[marsha][lang])
+
+			json_data.close()
 
 	def sortkeypicker(self, keynames):
 		negate = set()
@@ -211,7 +227,7 @@ class MainHandler(webapp2.RequestHandler):
 		print "two years ago " + str(date.today().year-2)
 		#if the hotel was built within the last two years, include the recently opened sentence and remove the city statement
 		print "diff " + str(date.today().year - int(self.whenBuilt))
-		if date.today().year - int(self.whenBuilt) <= 2:
+		if date.today().year - int(self.whenBuilt) <= 200:
 			allSentences = self.removeSentenceByName(allSentences, 'city_statement')
 		else:
 			allSentences = self.removeSentenceByName(allSentences, 'recently_opened')
@@ -253,37 +269,14 @@ class MainHandler(webapp2.RequestHandler):
 
 	def get(self):
 		self.response.write(PAGE_START_HTML)
-		content = urllib2.urlopen(cgi.escape("http://mar-numberfive.appspot.com/static/nycmqEpic.xml")).read()
-		soup = BeautifulSoup(content)
-		self.buildDescriptions(soup)
-		for lang in self.currentLangs:
-			self.response.write('<br><b>' + lang + '</b><br>')
-			self.response.write(self.allDescriptions[lang])
+		self.buildDescriptions()
+		for marsha in self.marshas:
+			self.response.write('<h2>' + marsha + '</h2>')
+			for lang in self.currentLangs:
+				self.response.write('<br><b>' + lang + '</b><br>')
+				self.response.write(self.allDescriptions[marsha][lang])
 			self.response.write('<br><br>')
 		self.response.write(PAGE_END_HTML)
-	def post(self):
-		self.response.write(PAGE_START_HTML)
-		content = urllib2.urlopen(cgi.escape(self.request.get('urlToXml'))).read()
-		soup = BeautifulSoup(content)
-		self.buildDescriptions(soup)
-		for lang in self.currentLangs:
-			self.response.write('<br><b>' + lang + '</b><br>')
-			self.response.write(self.allDescriptions[lang])
-			self.response.write('<br><br>')
-		self.response.write(PAGE_END_HTML)
-		
-# class Description(webapp2.RequestHandler):
-# 	def post(self):
-# 		content = urllib2.urlopen(cgi.escape(self.request.get('urlToXml'))).read()
-# 		soup = BeautifulSoup(content)
-# 		print soup.hoteldescriptivecontent['hotelname']
-# 		self.response.write(soup.hoteldescriptivecontent['hotelname'])
-        # self.response.write('<html><body>You wrote:<pre>')
-        # self.response.write(cgi.escape(self.request.get('content')))
-        # self.response.write('</pre></body></html>')
-
-
-
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler)

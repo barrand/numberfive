@@ -13,13 +13,13 @@
                     "phrase": "{topPoi} befindet sich nur {topPoiDist} von unserem {hotelName}. {b2} {restPoiList}. "
                 },
                 {
-                    "phrase": "Das {hotelName} {b3}  {poiList}. "
+                    "phrase": "Das {hotelName} ist {b3} {poiList}. "
                 }
             ],
             "banks": {
                 "b1": "Verpassen Sie nicht/Nehmen Sie sich Zeit für/Unsere Gäste schätzen",
                 "b2": "Sehr beliebte Sehenswürdigkeiten sind weiters /Erkunden Sie auch/Besuchen Sie in der Nähe/Nahe zu unserem Hotel finden Sie/Weitere Sehenswürdigketien sind/",
-                "b3": "in der Nähe von/nahe zu/direkt in/Nur wenige Kilometer vom Stadtzentrum entfern/in unmittelbarer Nähe"
+                "b3": "in der Nähe von/nahe zu/direkt in/in unmittelbarer Nähe"
             }
         },
         {
