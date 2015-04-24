@@ -28,7 +28,7 @@
             "name": "city_statement",
             "phrases": [
                 {
-                    "phrase": "{b1} {cityName} wenn sie bei uns im {hotelName} übernachten. "
+                    "phrase": "{b1} {cityName} wenn sie bei uns im {hotelNameSansCity} übernachten. "
                 }
             ],
             "banks": {
@@ -45,15 +45,15 @@
                     "phrase": "{b1} Das ",
                     "phrases": [
                         {
-                            "phrase": "{b2} wurde {hotelName} in {city} eröffnet. "
+                            "phrase": "{b2} wurde {hotelNameSansCity} in {cityName} eröffnet. "
                         },
                         {
-                            "phrase": "{hotelName}, {city} neueste {b4}. "
+                            "phrase": "{hotelNameSansCity}, {cityName} neueste {b4}. "
                         }
                     ]
                 },
                 {
-                    "phrase": "{b3}{hotelName}{cityName} wurde {b4} im Jahr {openDate}. "
+                    "phrase": "{b3}{hotelNameSansCity}{cityName} wurde {b4} im Jahr {whenBuilt}. "
                 }
             ],
             "banks": {
