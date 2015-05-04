@@ -120,6 +120,19 @@ class MainHandler(webapp2.RequestHandler):
 			else:
 				self.restPoiList += " and the " + a
 			poiCount += 1
+
+		self.onsiteRestaurants = []
+		restaurantsTag = soup.find('restaurants')
+		print "all rest " + str(len(restaurantsTag))
+		for restTag in restaurantsTag:
+			descriptions = restTag.find_all('description')
+			for d in descriptions:
+				isOnsite = d.text == 'Onsite'
+				print 'isOnsite ' + str(isOnsite)
+				if isOnsite:
+					self.onsiteRestaurants.append(restTag)
+		print "onsite rest " + str(len(self.onsiteRestaurants))
+				# print "description tag " + str(d.get('Description'))
 # self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
 # 		if self.airportName is not None:
 # 			print "airpport " + str(self.airportName)
@@ -139,7 +152,8 @@ class MainHandler(webapp2.RequestHandler):
 	def buildDescriptions(self):
 		# self.currentLangs = ['en', 'br']
 		# self.marshas = ['bkkms', 'dxbae', 'dxbjw', 'hktjw', "hktkl", "jedsa", "lonpr", "nycme", "nycmq", "pmimc", "sllms", "stocy", "wawpl", "yowmc"]
-		self.marshas = ['nycmq', 'dxbae', 'dxbjw', 'hktjw', 'hktkl', 'jedsa']
+		# self.marshas = ['nycmq', 'dxbae', 'dxbjw', 'hktjw', 'hktkl', 'jedsa']
+		self.marshas = ['dxbae', 'dxbjw']
 		self.currentLangs = ['en', 'de']
 		#initialize the string that will hold all the descriptions
 		
@@ -157,7 +171,6 @@ class MainHandler(webapp2.RequestHandler):
 
 			for lang in self.currentLangs:
 				self.allDescriptions[marsha][lang] = ""
-				print "file " + 'sentences_'+lang+'.json'
 				json_data = open('sentences_'+lang+'.json')
 				templates = json.load(json_data)
 
@@ -198,9 +211,6 @@ class MainHandler(webapp2.RequestHandler):
 					#loop through those sentences and add the output
 					for t in sentencesByOrder[k]:
 						try:
-							print "trying to append " + str(self.allDescriptions[marsha])
-							print "more " + marsha
-							print "lang " + lang
 							self.allDescriptions[marsha][lang] += t['output']
 						except KeyError:
 							print "\tCOULDN'T ADD " + str(t)
@@ -224,9 +234,7 @@ class MainHandler(webapp2.RequestHandler):
 		return getit
 
 	def removeConditionalSentences(self, allSentences):
-		print "two years ago " + str(date.today().year-2)
 		#if the hotel was built within the last two years, include the recently opened sentence and remove the city statement
-		print "diff " + str(date.today().year - int(self.whenBuilt))
 		if date.today().year - int(self.whenBuilt) <= 200:
 			allSentences = self.removeSentenceByName(allSentences, 'city_statement')
 		else:
@@ -235,11 +243,8 @@ class MainHandler(webapp2.RequestHandler):
 
 	def removeSentenceByName(self, allSentences, name):
 		for s in allSentences:
-			print "name check " + s['name'] + " " + name
 			if s['name'] == name:
-				print "\nbefore " + str(len(allSentences))
 				allSentences.remove(s)
-				print "after " + str(len(allSentences))
 				break
 		return allSentences
 

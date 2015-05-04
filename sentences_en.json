@@ -80,6 +80,25 @@
                 "b2": "hotel/property/building/location",
                 "b3": "constructed/raised/built/completed/finished/introduced/inagurated"
             }
+        },
+        {
+            "order": 1,
+            "priority": 3,
+            "name": "restaurants",
+            "phrases": [
+                {
+                    "phrase": "{restaurantName1}, {restaurantName2} and {restaurantName3} are {b1} dining {b2}. ",
+                    "phrase": "{b3} include {b4} {b5} {b6} {topTwoRestaurants}. "
+                }
+            ],
+            "banks": {
+                "b1": "many/multiple/various/varied/eclectic/diverse/numerous/assorted",
+                "b2": "options/choices/selections/picks",
+                "b3": "Restaurants/Dining selections/Places to eat",
+                "b4": "great/fantastic/delicious/delightful/enjoyable/appetizing/delectable/enticing/tasty/tempting",
+                "b5": "choices/selections/options/picks",
+                "b6": "like/such as/for example"
+            }
         }
     ]
 }
