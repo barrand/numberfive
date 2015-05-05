@@ -122,16 +122,17 @@ class MainHandler(webapp2.RequestHandler):
 			poiCount += 1
 
 		self.onsiteRestaurants = []
-		restaurantsTag = soup.find('restaurants')
-		print "all rest " + str(len(restaurantsTag))
-		for restTag in restaurantsTag:
+		for restTag in soup.find('restaurants'):
 			descriptions = restTag.find_all('description')
 			for d in descriptions:
 				isOnsite = d.text == 'Onsite'
-				print 'isOnsite ' + str(isOnsite)
 				if isOnsite:
 					self.onsiteRestaurants.append(restTag)
-		print "onsite rest " + str(len(self.onsiteRestaurants))
+		
+		self.restaurantName1 = self.onsiteRestaurants[0]['restaurantname']
+		self.restaurantName2 = self.onsiteRestaurants[1]['restaurantname']
+		self.restaurantName3 = self.onsiteRestaurants[2]['restaurantname']
+		print " name 1 " + self.restaurantName1
 				# print "description tag " + str(d.get('Description'))
 # self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
 # 		if self.airportName is not None:
@@ -147,6 +148,9 @@ class MainHandler(webapp2.RequestHandler):
 		str = str.replace('{topPoi}', self.topPoi)
 		str = str.replace('{restPoiList}', self.restPoiList)
 		str = str.replace('{whenBuilt}', self.whenBuilt)
+		str = str.replace('{restaurantName1}', self.restaurantName1)
+		str = str.replace('{restaurantName2}', self.restaurantName2)
+		str = str.replace('{restaurantName3}', self.restaurantName3)
 		return str
 
 	def buildDescriptions(self):

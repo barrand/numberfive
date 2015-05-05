@@ -1,5 +1,5 @@
 {
-    "maxLimit": 255,
+    "maxLimit": 555,
     "sentences": [
         {
             "order": 1,
@@ -84,11 +84,11 @@
         {
             "order": 1,
             "priority": 3,
-            "name": "restaurants",
+            "name": "multipleRestaurants",
             "phrases": [
                 {
                     "phrase": "{restaurantName1}, {restaurantName2} and {restaurantName3} are {b1} dining {b2}. ",
-                    "phrase": "{b3} include {b4} {b5} {b6} {topTwoRestaurants}. "
+                    "phrase": "{b3} include {b4} {b5} {b6} {restaurantName1} and {restaurantName2}. "
                 }
             ],
             "banks": {
