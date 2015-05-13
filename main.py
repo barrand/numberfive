@@ -21,7 +21,6 @@ sys.path.insert(0, 'libs')
 
 import webapp2
 import random
-import sentences
 import urllib2
 import json
 from datetime import date
@@ -52,7 +51,7 @@ class MainHandler(webapp2.RequestHandler):
 		self.hotelName = soup.hoteldescriptivecontent['hotelname']
 		self.whenBuilt = soup.hotelinfo['whenbuilt']
 		self.cityName = soup.find(contactprofiletype='Property Info').find('cityname').renderContents()
-		self.hotelNameSansCity = self.hotelName.replace(self.cityName, "")
+		self.hotelNameSansCity = self.hotelName.replace(" " + self.cityName, "")
 		self.roomCount = soup.find_all('guestroominfo', code='8')[0]['quantity']
 		self.suiteCount = soup.find_all('guestroominfo', code='9')[0]['quantity']
 		urbanTags = soup.find_all('locationcategory', code='3', existscode='1', codedetail="Location Type: City")
@@ -131,7 +130,10 @@ class MainHandler(webapp2.RequestHandler):
 		
 		self.restaurantName1 = self.onsiteRestaurants[0]['restaurantname']
 		self.restaurantName2 = self.onsiteRestaurants[1]['restaurantname']
-		self.restaurantName3 = self.onsiteRestaurants[2]['restaurantname']
+		try:
+			self.restaurantName3 = self.onsiteRestaurants[2]['restaurantname']
+		except IndexError:
+			self.restaurantName3 = None
 		print " name 1 " + self.restaurantName1
 				# print "description tag " + str(d.get('Description'))
 # self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
@@ -149,15 +151,17 @@ class MainHandler(webapp2.RequestHandler):
 		str = str.replace('{restPoiList}', self.restPoiList)
 		str = str.replace('{whenBuilt}', self.whenBuilt)
 		str = str.replace('{restaurantName1}', self.restaurantName1)
-		str = str.replace('{restaurantName2}', self.restaurantName2)
-		str = str.replace('{restaurantName3}', self.restaurantName3)
+		if self.restaurantName2:
+			str = str.replace('{restaurantName2}', self.restaurantName2)
+		if self.restaurantName3:
+			str = str.replace('{restaurantName3}', self.restaurantName3)
 		return str
 
 	def buildDescriptions(self):
 		# self.currentLangs = ['en', 'br']
 		# self.marshas = ['bkkms', 'dxbae', 'dxbjw', 'hktjw', "hktkl", "jedsa", "lonpr", "nycme", "nycmq", "pmimc", "sllms", "stocy", "wawpl", "yowmc"]
 		# self.marshas = ['nycmq', 'dxbae', 'dxbjw', 'hktjw', 'hktkl', 'jedsa']
-		self.marshas = ['dxbae', 'dxbjw']
+		self.marshas = ['dxbae', 'dxbjw', 'wawpl']
 		self.currentLangs = ['en', 'de']
 		#initialize the string that will hold all the descriptions
 		
@@ -170,12 +174,12 @@ class MainHandler(webapp2.RequestHandler):
 			content = urllib2.urlopen(cgi.escape("http://mar-numberfive.appspot.com/static/"+marsha+"Epic.xml")).read()
 			soup = BeautifulSoup(content)
 			self.setupCommonVars(soup)
-			uniqueOrderKeys = []
 			self.allDescriptions[marsha] = {}
 
 			for lang in self.currentLangs:
+				uniqueOrderKeys = []
 				self.allDescriptions[marsha][lang] = ""
-				json_data = open('sentences_'+lang+'.json')
+				json_data = open('sentencesTest_'+lang+'.json')
 				templates = json.load(json_data)
 
 				
@@ -200,9 +204,12 @@ class MainHandler(webapp2.RequestHandler):
 						t['output'] = tmpString
 						uniqueOrderKeys.append(t['order'])
 						try:
+							# print 'creating new [] ' + t['order']
 							sentencesByOrder[t['order']]
 						except KeyError:
 							sentencesByOrder[t['order']] = []
+						print "\nput in a new order " + str(t)
+						print "putting it here " + str(sentencesByOrder[t['order']])
 						sentencesByOrder[t['order']].append(t)
 
 				#make it a uniqe list
@@ -210,6 +217,8 @@ class MainHandler(webapp2.RequestHandler):
 				
 				#for every unique order entry
 				for k in uniqueOrderKeys:
+					print "k " + str(k)
+					print "sentencesByOrder " + str(sentencesByOrder)
 					#grab all the sentences with that order parameter
 					shuffle(sentencesByOrder[k])
 					#loop through those sentences and add the output
@@ -239,17 +248,26 @@ class MainHandler(webapp2.RequestHandler):
 
 	def removeConditionalSentences(self, allSentences):
 		#if the hotel was built within the last two years, include the recently opened sentence and remove the city statement
-		if date.today().year - int(self.whenBuilt) <= 200:
+		if date.today().year - int(self.whenBuilt) <= 2:
 			allSentences = self.removeSentenceByName(allSentences, 'city_statement')
 		else:
 			allSentences = self.removeSentenceByName(allSentences, 'recently_opened')
+
+		#if the hotel name has the city in it, then we don't need the city statement, so it isn't repetitive
+		if self.hotelName.find(self.cityName) > -1:
+			allSentences = self.removeSentenceByName(allSentences, 'city_statement')
+
 		return allSentences
 
 	def removeSentenceByName(self, allSentences, name):
 		for s in allSentences:
-			if s['name'] == name:
-				allSentences.remove(s)
-				break
+			print "wtf " + str(s) + " name " + name
+			try:
+				if s['name'] == name:
+					allSentences.remove(s)
+					break
+			except KeyError:
+				print 'all soldiers gone'
 		return allSentences
 
 	#function to pick a random sentence, and fill it from the banks

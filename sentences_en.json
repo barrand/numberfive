@@ -2,7 +2,7 @@
     "maxLimit": 555,
     "sentences": [
         {
-            "order": 1,
+            "order": 2,
             "priority": 1,
             "name": "points_of_interest",
             "phrases": [
@@ -76,7 +76,7 @@
                 }
             ],
             "banks": {
-                "b1": "historic/classic/timeliess/memorable/celebrated/extraordinary/vintage/time-honored/enduring/unforgettable/distinguished/illustrious/lasting/notable/remarkable",
+                "b1": "historic/classic/timeless/memorable/celebrated/extraordinary/vintage/time-honored/enduring/unforgettable/distinguished/illustrious/lasting/notable/remarkable",
                 "b2": "hotel/property/building/location",
                 "b3": "constructed/raised/built/completed/finished/introduced/inagurated"
             }
@@ -88,16 +88,13 @@
             "phrases": [
                 {
                     "phrase": "{restaurantName1}, {restaurantName2} and {restaurantName3} are {b1} dining {b2}. ",
-                    "phrase": "{b3} include {b4} {b5} {b6} {restaurantName1} and {restaurantName2}. "
+                    "phrase": "{b3} dining {b2} include {restaurantName1} and {restaurantName2}.  "
                 }
             ],
             "banks": {
                 "b1": "many/multiple/various/varied/eclectic/diverse/numerous/assorted",
                 "b2": "options/choices/selections/picks",
-                "b3": "Restaurants/Dining selections/Places to eat",
-                "b4": "great/fantastic/delicious/delightful/enjoyable/appetizing/delectable/enticing/tasty/tempting",
-                "b5": "choices/selections/options/picks",
-                "b6": "like/such as/for example"
+                "b3": "Great/Fantastic/Delicious/Delightful/Enjoyable/Appetizing/Delectable/Enticing/Tasty/Tempting"
             }
         }
     ]
