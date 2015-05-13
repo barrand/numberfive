@@ -33,13 +33,9 @@ from operator import attrgetter, itemgetter
 PAGE_START_HTML = """\
 <html>
   <body>
-    <form action="/" method="post">
-    <div><textarea name="urlToXml" rows="1" cols="60">http://mar-numberfive.appspot.com/static/nycmqEpic.xml</textarea></div>
-    <div><input type="submit" value="Go"></div>
-"""
+  """
 
 PAGE_END_HTML = """\
-    </form>
   </body>
 </html>
 """
@@ -179,7 +175,7 @@ class MainHandler(webapp2.RequestHandler):
 			for lang in self.currentLangs:
 				uniqueOrderKeys = []
 				self.allDescriptions[marsha][lang] = ""
-				json_data = open('sentencesTest_'+lang+'.json')
+				json_data = open('sentences_'+lang+'.json')
 				templates = json.load(json_data)
 
 				
