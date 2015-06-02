@@ -46,6 +46,8 @@ class MainHandler(webapp2.RequestHandler):
 	def setupCommonVars(self, soup):
 		self.hotelName = soup.hoteldescriptivecontent['hotelname']
 		self.whenBuilt = soup.hotelinfo['whenbuilt']
+		tmpNode = soup.find_all('architecturalstyle', code='5')
+		self.isHistoric = str(tmpNode).find('existscode="1"') > -1
 		self.cityName = soup.find(contactprofiletype='Property Info').find('cityname').renderContents()
 		self.hotelNameSansCity = self.hotelName.replace(" " + self.cityName, "")
 		self.roomCount = soup.find_all('guestroominfo', code='8')[0]['quantity']
@@ -117,27 +119,58 @@ class MainHandler(webapp2.RequestHandler):
 			poiCount += 1
 
 		self.onsiteRestaurants = []
+		self.cuisineTypesList = []
+		self.cuisineList = ""
+
+		tmpRestaurantCount = 0
 		for restTag in soup.find('restaurants'):
 			descriptions = restTag.find_all('description')
 			for d in descriptions:
 				isOnsite = d.text == 'Onsite'
 				if isOnsite:
+					tmpRestaurantCount += 1
 					self.onsiteRestaurants.append(restTag)
+					self.addToCuiseTypeListIfApplicable(restTag, self.cuisineTypesList)
 		
+		rCount = 0
+		for r in self.cuisineTypesList:
+			if rCount < len(self.cuisineTypesList)-1:
+				print "rCount " + str(rCount) + " " + r + " " + str(len(self.cuisineTypesList)-1)
+				self.cuisineList += r + ", "
+			else:
+				self.cuisineList += " and " + r
+			rCount += 1
+
+		self.restaurantCount = str(tmpRestaurantCount)
+
 		self.restaurantName1 = self.onsiteRestaurants[0]['restaurantname']
 		self.restaurantName2 = self.onsiteRestaurants[1]['restaurantname']
 		try:
 			self.restaurantName3 = self.onsiteRestaurants[2]['restaurantname']
 		except IndexError:
 			self.restaurantName3 = None
-		print " name 1 " + self.restaurantName1
+
+
 				# print "description tag " + str(d.get('Description'))
 # self.airportName = soup.find('attraction', attractioncategorycode='1')['attractionname']
 # 		if self.airportName is not None:
 # 			print "airpport " + str(self.airportName)
 
+	
+	def addToCuiseTypeListIfApplicable(self, restTag, showoffCuisineTypes):
+		tmpCuisine = restTag.cuisinecodes.cuisinecode['codedetail']
+		if tmpCuisine in self.allShowoffCuisineTypes:
+			if tmpCuisine not in showoffCuisineTypes:
+				#only add up to 4 cuisine types, we don't want too many
+				if len(self.cuisineTypesList) < 4:
+					print "rest tag " + str(tmpCuisine)
+					self.cuisineTypesList.append(tmpCuisine)
+
+
 		# self.suiteCount = soup.
 	def replaceVars(self, str):
+		str = str.replace('{cuisineList}', self.cuisineList)
+		str = str.replace('{restaurantCount}', self.restaurantCount)
 		str = str.replace('{hotelName}', self.hotelName)
 		str = str.replace('{cityName}', self.cityName)
 		str = str.replace('{hotelNameSansCity}', self.hotelNameSansCity)
@@ -157,11 +190,14 @@ class MainHandler(webapp2.RequestHandler):
 		# self.currentLangs = ['en', 'br']
 		# self.marshas = ['bkkms', 'dxbae', 'dxbjw', 'hktjw', "hktkl", "jedsa", "lonpr", "nycme", "nycmq", "pmimc", "sllms", "stocy", "wawpl", "yowmc"]
 		# self.marshas = ['nycmq', 'dxbae', 'dxbjw', 'hktjw', 'hktkl', 'jedsa']
-		self.marshas = ['dxbae', 'dxbjw', 'wawpl']
+		self.marshas = ['caijw', 'lpaac', 'wawpl', 'lonpr']
 		self.currentLangs = ['en', 'de']
+		self.allShowoffCuisineTypes = ['American', 'Asian', 'Asian-Fusion', 'Austrian', 'Azerbaijan', 'Bar-B-Q', 'Cajun', 'California', 'Canadian', 'Chinese', 'Creole', 'English', 'French', 'German', 'Greek', 'Indian', 'Indonesian', 'International', 'Iranian', 'Italian', 'Japanese', 'Jewish', 'Mediterranean', 'Mexican', 'Middle Eastern', 'Modern Australian', 'Russian', 'Scottish', 'South American', 'Southern', 'Southwestern', 'Spanish', 'Swiss', 'Tex-Mex', 'Thai', 'Vegetarian', 'Vietnamese']
 		#initialize the string that will hold all the descriptions
 		
-		
+		poi_data = open('poi.json')
+		self.allPois = json.load(poi_data)
+
 		self.allDescriptions = {}
 		# for lang in self.currentLangs:
 		# 	self.allDescriptions[lang] = ""
@@ -204,8 +240,6 @@ class MainHandler(webapp2.RequestHandler):
 							sentencesByOrder[t['order']]
 						except KeyError:
 							sentencesByOrder[t['order']] = []
-						print "\nput in a new order " + str(t)
-						print "putting it here " + str(sentencesByOrder[t['order']])
 						sentencesByOrder[t['order']].append(t)
 
 				#make it a uniqe list
@@ -213,8 +247,6 @@ class MainHandler(webapp2.RequestHandler):
 				
 				#for every unique order entry
 				for k in uniqueOrderKeys:
-					print "k " + str(k)
-					print "sentencesByOrder " + str(sentencesByOrder)
 					#grab all the sentences with that order parameter
 					shuffle(sentencesByOrder[k])
 					#loop through those sentences and add the output
@@ -253,11 +285,16 @@ class MainHandler(webapp2.RequestHandler):
 		if self.hotelName.find(self.cityName) > -1:
 			allSentences = self.removeSentenceByName(allSentences, 'city_statement')
 
+		if not self.isHistoric:
+			allSentences = self.removeSentenceByName(allSentences, 'historic')
+
+		if len(self.cuisineTypesList) < 3:
+			allSentences = self.removeSentenceByName(allSentences, 'multipleRestaurants')
+
 		return allSentences
 
 	def removeSentenceByName(self, allSentences, name):
 		for s in allSentences:
-			print "wtf " + str(s) + " name " + name
 			try:
 				if s['name'] == name:
 					allSentences.remove(s)

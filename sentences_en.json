@@ -89,14 +89,15 @@
                 {
                     "phrase": "{restaurantName1}, {restaurantName2} and {restaurantName3} are {b1} dining {b2}. ",
                     "phrase": "{b3} dining {b2} include {restaurantName1} and {restaurantName2}. ",
-                    "phrase": "{b4} {cuiseTypesList} from our {restaurantCount} onsite dining {b2}. "
+                    "phrase": "{b4} {cuisineList} {b5} among our {restaurantCount} onsite dining {b2}. "
                 }
             ],
             "banks": {
                 "b1": "many/multiple/various/varied/eclectic/diverse/numerous/assorted",
                 "b2": "options/choices/selections/picks",
                 "b3": "Great/Fantastic/Delicious/Delightful/Enjoyable/Appetizing/Delectable/Enticing/Tasty/Tempting",
-                "b4": "We got you covered with/Come hungry and choose between/Get your grub on with/Good luck picking between/Feast in style with"
+                "b4": "We got you covered with/Come hungry and choose between/Get your grub on with/Good luck picking between/Feast in style with/Tempt your palate with",
+                "b5": "cuisine"
             }
         }
     ]
