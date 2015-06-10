@@ -119,6 +119,7 @@ class MainHandler(webapp2.RequestHandler):
 			poiCount += 1
 
 		self.onsiteRestaurants = []
+		#a list of all the cool cuisine restaurants for this hotel
 		self.cuisineTypesList = []
 		self.cuisineList = ""
 
@@ -130,6 +131,8 @@ class MainHandler(webapp2.RequestHandler):
 				if isOnsite:
 					tmpRestaurantCount += 1
 					self.onsiteRestaurants.append(restTag)
+					#we only want to add a restaurant if it has a cool cuisine type (not)
+					#something like coffee shop, or deli
 					self.addToCuiseTypeListIfApplicable(restTag, self.cuisineTypesList)
 		
 		rCount = 0
@@ -184,13 +187,16 @@ class MainHandler(webapp2.RequestHandler):
 			str = str.replace('{restaurantName2}', self.restaurantName2)
 		if self.restaurantName3:
 			str = str.replace('{restaurantName3}', self.restaurantName3)
+		if len(self.cuisineTypesList) > 0:
+			str = str.replace('{cuisineType1}', self.cuisineTypesList[0])
 		return str
 
 	def buildDescriptions(self):
 		# self.currentLangs = ['en', 'br']
 		# self.marshas = ['bkkms', 'dxbae', 'dxbjw', 'hktjw', "hktkl", "jedsa", "lonpr", "nycme", "nycmq", "pmimc", "sllms", "stocy", "wawpl", "yowmc"]
 		# self.marshas = ['nycmq', 'dxbae', 'dxbjw', 'hktjw', 'hktkl', 'jedsa']
-		self.marshas = ['caijw', 'lpaac', 'wawpl', 'lonpr']
+		#self.marshas = ['caijw', 'lpaac', 'wawpl', 'lonpr']
+		self.marshas = ['lpaac', 'lonpr']
 		self.currentLangs = ['en', 'de']
 		self.allShowoffCuisineTypes = ['American', 'Asian', 'Asian-Fusion', 'Austrian', 'Azerbaijan', 'Bar-B-Q', 'Cajun', 'California', 'Canadian', 'Chinese', 'Creole', 'English', 'French', 'German', 'Greek', 'Indian', 'Indonesian', 'International', 'Iranian', 'Italian', 'Japanese', 'Jewish', 'Mediterranean', 'Mexican', 'Middle Eastern', 'Modern Australian', 'Russian', 'Scottish', 'South American', 'Southern', 'Southwestern', 'Spanish', 'Swiss', 'Tex-Mex', 'Thai', 'Vegetarian', 'Vietnamese']
 		#initialize the string that will hold all the descriptions
@@ -288,9 +294,16 @@ class MainHandler(webapp2.RequestHandler):
 		if not self.isHistoric:
 			allSentences = self.removeSentenceByName(allSentences, 'historic')
 
-		if len(self.cuisineTypesList) < 3:
+		#if we have a lot of cool restaurants
+		if len(self.cuisineTypesList) >= 3:
+			allSentences = self.removeSentenceByName(allSentences, 'fewRestaurants')
+		#if we have a few cool restaurants
+		elif len(self.cuisineTypesList) < 3 and len(self.cuisineTypesList) > 0:
 			allSentences = self.removeSentenceByName(allSentences, 'multipleRestaurants')
-
+		#if we have no cool restaurants	
+		elif len(self.cuisineTypesList) == 0:
+			allSentences = self.removeSentenceByName(allSentences, 'multipleRestaurants')
+			allSentences = self.removeSentenceByName(allSentences, 'fewRestaurants')
 		return allSentences
 
 	def removeSentenceByName(self, allSentences, name):

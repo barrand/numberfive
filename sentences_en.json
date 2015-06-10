@@ -87,18 +87,42 @@
             "name": "multipleRestaurants",
             "phrases": [
                 {
-                    "phrase": "{restaurantName1}, {restaurantName2} and {restaurantName3} are {b1} dining {b2}. ",
-                    "phrase": "{b3} dining {b2} include {restaurantName1} and {restaurantName2}. ",
-                    "phrase": "{b4} {cuisineList} {b5} among our {restaurantCount} onsite dining {b2}. "
+                    "phrase": "{b2} dining {b3} include {restaurantName1} and {restaurantName2}. "
+                },
+                {
+                    "phrase": "{b3} {cuisineList} {b4} among our {restaurantCount} onsite dining {b1}. "
                 }
             ],
             "banks": {
-                "b1": "many/multiple/various/varied/eclectic/diverse/numerous/assorted",
-                "b2": "options/choices/selections/picks",
-                "b3": "Great/Fantastic/Delicious/Delightful/Enjoyable/Appetizing/Delectable/Enticing/Tasty/Tempting",
-                "b4": "We got you covered with/Come hungry and choose between/Get your grub on with/Good luck picking between/Feast in style with/Tempt your palate with",
-                "b5": "cuisine"
+                "b1": "options/choices/selections/picks",
+                "b2": "Great/Fantastic/Delicious/Delightful/Enjoyable/Appetizing/Delectable/Enticing/Tasty/Tempting",
+                "b3": "We got you covered with/Come hungry and choose between/Get your grub on with/Good luck picking between/Feast in style with/Tempt your palate with",
+                "b4": "cuisine"
+            }
+        },
+        {
+            "order": 3,
+            "priority": 3,
+            "name": "fewRestaurants",
+            "phrases": [
+                {
+                    "phrase": "{b1} restaurant {restaurantName1}, {b2} {cuisineType1} {b3}. "
+                },
+                {
+                    "phrase": "{b4} {cuisineType1} {b3}, {b5} {restaurantName1} {b7} {b6}. "
+                }
+            ],
+            "banks": {
+                "b1": "Onsite/On property/On premises/At our property",
+                "b2": "is a great choice for/has fantastic/makes a great choice for",
+                "b3": "cuisine/food/dining/fare/dishes",
+                "b4": "For/To experience true/To taste true/To enjoy/For some/For some true/For some delectable/For some tasty",
+                "b5": "try/sample",
+                "b6": "onsite/on-property/on premises/right here",
+                "b7": "which is/which is found/which can be found/conviently located/right"
+
             }
         }
     ]
 }
+

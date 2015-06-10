@@ -2,30 +2,26 @@
     "maxLimit": 555,
     "sentences": [
         {
-            "order": 1,
-            "priority": 1,
-            "name": "boo",
+            "order": 3,
+            "priority": 3,
+            "name": "fewRestaurants",
             "phrases": [
                 {
-                    "phrase": "asdf. "
+                    "phrase": "{b1} {restaurantName1} {b2} {cuisineType1} {b3}. ",
+                    "phrase": "{b4} {cuisineType1} {b3}, {b5} {restaurantName1} {b7} {b6}. "
                 }
             ],
             "banks": {
-                "b1": "fds"
-            }
-        },
-        {
-            "order": -10,
-            "priority": 1,
-            "name": "ds",
-            "phrases": [
-                {
-                    "phrase": "sdffffff. "
-                }
-            ],
-            "banks": {
-                "b1": "zz"
+                "b1": "Onsite/On property/On premises/At our property",
+                "b2": "is a great choice for/has fantastic/makes a great choice for",
+                "b3": "cuisine/food/dining/fare/dishes",
+                "b4": "For/To experience true",
+                "b5": "try/sample",
+                "b6": "onsite/on property/on premises",
+                "b7": "which is/which is found/which can be found/conviently located/right"
+
             }
         }
     ]
 }
+
