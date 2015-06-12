@@ -113,7 +113,7 @@
                 }
             ],
             "banks": {
-                "b1": "Onsite/On property/On premises/At our property",
+                "b1": "Onsite/On property/On premises",
                 "b2": "is a great choice for/has fantastic/makes a great choice for",
                 "b3": "cuisine/food/dining/fare/dishes",
                 "b4": "For/To experience true/To taste true/To enjoy/For some/For some true/For some delectable/For some tasty",
@@ -121,6 +121,26 @@
                 "b6": "onsite/on-property/on premises/right here",
                 "b7": "which is/which is found/which can be found/conviently located/right"
 
+            }
+        },
+        {
+            "order": 3,
+            "priority": 3,
+            "name": "golf",
+            "phrases": [
+                {
+                    "phrase": "{b1} and {b2} the {b3} {b4} at {golfCourseName}. "
+                },
+                {
+                    "phrase": "{golfCourseName} is a {b3} {b5} to {b2} the {b4}. "
+                }
+            ],
+            "banks": {
+                "b1": "Enjoy great great golf/Book your tee time/ Bring your caddy/Pack your golf clubs/Get ready to tee up/Dust off your golf clubs",
+                "b2": "hit/play/try",
+                "b3": "fun/challenging/exciting/beautiful/thrilling",
+                "b4": "links/greens",
+                "b5": "place/spot"
             }
         }
     ]

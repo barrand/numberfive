@@ -52,6 +52,13 @@ class MainHandler(webapp2.RequestHandler):
 		self.hotelNameSansCity = self.hotelName.replace(" " + self.cityName, "")
 		self.roomCount = soup.find_all('guestroominfo', code='8')[0]['quantity']
 		self.suiteCount = soup.find_all('guestroominfo', code='9')[0]['quantity']
+
+		golfTag = soup.find('recreation', code='27')
+		if golfTag:
+			self.golfName = golfTag['name']
+		else:
+			self.golfName = None
+		print "has golf " + str(self.golfName)
 		urbanTags = soup.find_all('locationcategory', code='3', existscode='1', codedetail="Location Type: City")
 		if len(urbanTags) > 0:
 			self.isUrban = True
@@ -189,6 +196,8 @@ class MainHandler(webapp2.RequestHandler):
 			str = str.replace('{restaurantName3}', self.restaurantName3)
 		if len(self.cuisineTypesList) > 0:
 			str = str.replace('{cuisineType1}', self.cuisineTypesList[0])
+		if self.golfName:
+			str = str.replace('{golfCourseName}', self.golfName)
 		return str
 
 	def buildDescriptions(self):
@@ -196,7 +205,7 @@ class MainHandler(webapp2.RequestHandler):
 		# self.marshas = ['bkkms', 'dxbae', 'dxbjw', 'hktjw', "hktkl", "jedsa", "lonpr", "nycme", "nycmq", "pmimc", "sllms", "stocy", "wawpl", "yowmc"]
 		# self.marshas = ['nycmq', 'dxbae', 'dxbjw', 'hktjw', 'hktkl', 'jedsa']
 		#self.marshas = ['caijw', 'lpaac', 'wawpl', 'lonpr']
-		self.marshas = ['lpaac', 'lonpr']
+		self.marshas = ['lpaac', 'lonpr', 'phxcb']
 		self.currentLangs = ['en', 'de']
 		self.allShowoffCuisineTypes = ['American', 'Asian', 'Asian-Fusion', 'Austrian', 'Azerbaijan', 'Bar-B-Q', 'Cajun', 'California', 'Canadian', 'Chinese', 'Creole', 'English', 'French', 'German', 'Greek', 'Indian', 'Indonesian', 'International', 'Iranian', 'Italian', 'Japanese', 'Jewish', 'Mediterranean', 'Mexican', 'Middle Eastern', 'Modern Australian', 'Russian', 'Scottish', 'South American', 'Southern', 'Southwestern', 'Spanish', 'Swiss', 'Tex-Mex', 'Thai', 'Vegetarian', 'Vietnamese']
 		#initialize the string that will hold all the descriptions
@@ -304,6 +313,9 @@ class MainHandler(webapp2.RequestHandler):
 		elif len(self.cuisineTypesList) == 0:
 			allSentences = self.removeSentenceByName(allSentences, 'multipleRestaurants')
 			allSentences = self.removeSentenceByName(allSentences, 'fewRestaurants')
+
+		if self.golfName is None:
+			allSentences = self.removeSentenceByName(allSentences, 'golf')
 		return allSentences
 
 	def removeSentenceByName(self, allSentences, name):
